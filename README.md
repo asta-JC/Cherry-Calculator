@@ -25,6 +25,7 @@
 - 🔊 **Interactive Feedback**: Satisfying audio and haptic feedback toggles for every button press.
 - 📱 **Adaptive Layouts**: Fully responsive design optimized for both compact phones and large screen tablets / foldables (split 2-pane layout).
 - 🎨 **Sci-Fi Glassmorphic Theme**: Stunning dark mode aesthetic powered by custom cherry neon gradients and smooth Material 3 animations.
+- 🔄 **v1.1 Rotation & Responsiveness**: Seamless full-screen landscape layout optimization for rotated phones featuring side-by-side keypads and bug fixes.
 
 ---
 
@@ -35,6 +36,13 @@
 - **Language**: 100% Kotlin
 - **Evaluation Engine**: Custom robust mathematical expression evaluator supporting operator precedence, parentheses, and trigonometric angle modes.
 - **State Management**: Lifecycle-aware state collection (`collectAsStateWithLifecycle`).
+
+---
+
+## 🚀 What's New in v1.1 🌟
+- **Fixed Phone Rotation & Landscape Layout**: Rotated phones now expand into a gorgeous full-screen layout with side-by-side keypads (Scientific & Basic) for effortless 10-foot usability without scrolling.
+- **Display & Result Refinements**: Removed background glow backlight and result shadow backing; preview results are now cleanly translucent until `=` is computed.
+- **Calculation Logs Spacing**: Added clean padding and separation between delete and close buttons in the calculation history menu.
 
 ---
 
