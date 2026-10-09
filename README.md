@@ -7,12 +7,12 @@
 ## 📱 Screenshots & UI Preview
 
 <p align="center">
-  <img src="app/src/main/res/drawable/icon.png" width="120" alt="Cherry Calculator Logo">
+  <img src="app/src/main/res/drawable/icon.png" width="100" alt="Cherry Calculator Logo">
 </p>
 
-| Standard Calculator | Scientific Mode | History Panel |
+| Standard Calculator | Scientific Mode | Calculation Logs |
 | :---: | :---: | :---: |
-| *Sleek & Minimalist* | *Advanced Functions ($\sin, \cos, \tan, \pi, e, \sqrt{}$, etc.)* | *Track Past Calculations* |
+| ![Standard Calculator](screenshots/1.jpg) | ![Scientific Mode](screenshots/2.jpg) | ![Calculation Logs](screenshots/3.jpg) |
 
 ---
 
