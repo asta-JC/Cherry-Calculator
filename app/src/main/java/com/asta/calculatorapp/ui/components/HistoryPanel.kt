@@ -195,7 +195,7 @@ fun HistoryPanelContent(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 if (history.isNotEmpty()) {
                     IconButton(
