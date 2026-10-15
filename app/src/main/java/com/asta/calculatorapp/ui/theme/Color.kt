@@ -2,40 +2,79 @@ package com.asta.calculatorapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Futuristic Dark Cherry Color Palette
-val DarkBgPrimary = Color(0xFF0A090D)
-val DarkBgSecondary = Color(0xFF140F18)
+// ============================================================================
+// CHERRY CALC COLOR PALETTE
+// Centralized color tokens for easy customization and theme adjustments.
+// ============================================================================
 
-// Sci-Fi Glass Panels
-val SciFiGlassPanel = Color(0xFF1D1524)
-val SciFiGlassBorder = Color(0xFF3D1E36)
-val SciFiGlassBorderGlow = Color(0x66FF1744)
+// Dark Background Colors (Near black with a subtle deep cherry tint)
+val DarkBgPrimary = Color(0xFF090508)      // Deep dark cherry black for main background
+val DarkBgSecondary = Color(0xFF130A11)    // Dark glass panel background
 
-// Neon Cherry Palette
+// Glass Panel & Border Styling
+val GlassPanelBg = Color(0xFF1C0D18)       // Dark frosted glass panel background
+val GlassPanelBorder = Color(0xFF3D162E)   // Subtle glass border color
+val GlassGlowColor = Color(0x66FF1744)     // Outer glow tint for panels
+val SciFiGlassPanel = GlassPanelBg
+val SciFiGlassBorder = GlassPanelBorder
+
+// Stem & Leaf Colors
+val CherryStemGreen = Color(0xFF4CAF50)    // Fresh green for cherry stems
+val CherryStemDark = Color(0xFF2E7D32)     // Darker shading for stem curvature
+val CherryLeafGreen = Color(0xFF81C784)    // Vibrant leaf green
+
+// 1. Classic Cherry Red (For Number Buttons 0-9 and .)
+val CherryClassicCenter = Color(0xFFFF2E55)  // Vibrant bright cherry red (center highlight)
+val CherryClassicEdge = Color(0xFF7A001B)    // Deep dark cherry red (outer edge)
+val CherryClassicGlow = Color(0x66FF1744)    // Ambient glow behind classic cherry
+
+// 2. Deep Burgundy / Dark Cherry (For Operator Buttons +, -, ×, ÷)
+val CherryOperatorCenter = Color(0xFFE91E63) // Bright pink-burgundy center
+val CherryOperatorEdge = Color(0xFF4A001F)   // Dark burgundy edge
+val CherryOperatorGlow = Color(0x88D81B60)   // Rich pink/burgundy glow
+
+// 3. Bright Red-to-Pink (For Equals Button =)
+val CherryEqualsStart = Color(0xFFFF1744)    // Bright glowing cherry red
+val CherryEqualsEnd = Color(0xFFFF4081)      // Vibrant cherry pink
+val CherryEqualsGlow = Color(0xAAFF1744)     // Strong pulsing glow aura
+
+// 4. Lighter Pink-Rose Cherry (For Clear, Delete, %, ± Action Buttons)
+val CherryActionCenter = Color(0xFFFF6289)   // Lighter pink-rose center
+val CherryActionEdge = Color(0xFF8E1E43)     // Deep rose edge
+val CherryActionGlow = Color(0x66FF6289)     // Soft pink-rose glow
+
+// 5. Scientific Buttons Cherry Theme
+val CherrySciFiCenter = Color(0xFFC2185B)    // Rose-violet center
+val CherrySciFiEdge = Color(0xFF3B0A22)      // Dark rose edge
+val CherrySciFiGlow = Color(0x44C2185B)      // Subdued sci-fi glow
+
+// Legacy color token mappings for backwards compatibility across existing components
 val NeonCherryPrimary = Color(0xFFFF1744)
 val NeonCherrySecondary = Color(0xFFFF2A6D)
-val CherryAccentSoft = Color(0xFFFF527B)
-val CherryContainerDeep = Color(0xFF380A18)
-val CherryContainerHover = Color(0xFF520C22)
+val CherryAccentSoft = Color(0xFFFF6289)
+val CherryContainerDeep = Color(0xFF3A0818)
+val CherryContainerHover = Color(0xFF590C25)
 val CherryGlowAura = Color(0x99FF1744)
 
-// Keypad Button Surface Colors
-val DigitButtonBg = Color(0xFF1B1426)
-val DigitButtonBgPressed = Color(0xFF2B1D3D)
-val OperatorButtonBg = Color(0xFF350F21)
-val OperatorButtonBgPressed = Color(0xFF541433)
-val ActionButtonBg = Color(0xFF2C1328)
-val ActionButtonBgPressed = Color(0xFF4A1A43)
-val SciFiButtonBg = Color(0xFF181222)
-val SciFiButtonBgPressed = Color(0xFF291D3B)
+val DigitButtonBg = CherryClassicEdge
+val DigitButtonBgPressed = CherryClassicCenter
+val OperatorButtonBg = CherryOperatorEdge
+val OperatorButtonBgPressed = CherryOperatorCenter
+val ActionButtonBg = CherryActionEdge
+val ActionButtonBgPressed = CherryActionCenter
+val SciFiButtonBg = CherrySciFiEdge
+val SciFiButtonBgPressed = CherrySciFiCenter
 
-// Equals Gradient
-val EqualsGradientStart = Color(0xFFFF1744)
-val EqualsGradientEnd = Color(0xFFFF2A6D)
+val EqualsGradientStart = CherryEqualsStart
+val EqualsGradientEnd = CherryEqualsEnd
 
-// Text & Status Indicators
-val TextBright = Color(0xFFF9F5F8)
-val TextMuted = Color(0xFFAFA3B8)
-val TextDim = Color(0xFF756782)
-val ErrorBright = Color(0xFFFF3366)
-val ErrorContainer = Color(0xFF420817)
+// Text & Display Highlights
+val TextBright = Color(0xFFFFFFFF)           // Pure white for crisp readability
+val TextGlowPink = Color(0xFFFF8DA1)         // Glowing cherry-pink text
+val TextMuted = Color(0xFFC4A5B7)            // Muted pinkish silver for secondary text
+val TextDim = Color(0xFF6B4D5E)              // Dim text for zero/placeholders
+val GlossHighlight = Color(0xFFFFFFFF)       // White specular highlight for wet glossy effect
+
+// Error State Colors
+val ErrorBright = Color(0xFFFF3366)          // Bright neon error red
+val ErrorContainer = Color(0xFF380815)       // Dark error background

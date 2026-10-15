@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -66,10 +67,10 @@ import com.asta.calculatorapp.ui.feedback.rememberFeedbackHelper
 import com.asta.calculatorapp.ui.theme.CalculatorAppTheme
 import com.asta.calculatorapp.ui.theme.CherryContainerDeep
 import com.asta.calculatorapp.ui.theme.DarkBgPrimary
+import com.asta.calculatorapp.ui.theme.GlassPanelBg
+import com.asta.calculatorapp.ui.theme.GlassPanelBorder
 import com.asta.calculatorapp.ui.theme.NeonCherryPrimary
 import com.asta.calculatorapp.ui.theme.NeonCherrySecondary
-import com.asta.calculatorapp.ui.theme.SciFiGlassBorder
-import com.asta.calculatorapp.ui.theme.SciFiGlassPanel
 import com.asta.calculatorapp.ui.theme.TextBright
 import com.asta.calculatorapp.ui.theme.TextDim
 import com.asta.calculatorapp.ui.theme.TextMuted
@@ -107,7 +108,7 @@ fun CalculatorContent(
         val isTablet = maxWidth >= 720.dp && maxHeight >= 600.dp
         val isLandscapePhone = maxWidth >= 600.dp && maxHeight < 600.dp
 
-        // Modal History Sheet for non-tablets (standard portrait screens & rotated landscape phones)
+        // Modal History Sheet for non-tablets
         if (!isTablet && showHistorySheet) {
             HistorySheet(
                 history = uiState.history,
@@ -133,25 +134,25 @@ fun CalculatorContent(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .drawBehind {
-                        // Atmospheric background gradient blobs
+                        // Atmospheric dark cherry radial gradient background glows
                         drawCircle(
                             brush = Brush.radialGradient(
-                                colors = listOf(NeonCherryPrimary.copy(alpha = 0.08f), Color.Transparent)
+                                colors = listOf(NeonCherryPrimary.copy(alpha = 0.12f), Color.Transparent)
                             ),
-                            radius = size.width * 0.35f,
-                            center = androidx.compose.ui.geometry.Offset(size.width * 0.5f, size.height * 0.52f)
+                            radius = size.width * 0.45f,
+                            center = Offset(size.width * 0.5f, size.height * 0.50f)
                         )
                         drawCircle(
                             brush = Brush.radialGradient(
-                                colors = listOf(NeonCherrySecondary.copy(alpha = 0.06f), Color.Transparent)
+                                colors = listOf(NeonCherrySecondary.copy(alpha = 0.08f), Color.Transparent)
                             ),
-                            radius = size.width * 0.40f,
-                            center = androidx.compose.ui.geometry.Offset(size.width * 0.5f, size.height * 0.72f)
+                            radius = size.width * 0.50f,
+                            center = Offset(size.width * 0.5f, size.height * 0.75f)
                         )
                     }
             ) {
                 if (isTablet) {
-                    // Large Tablet Split 2-Pane Layout
+                    // Tablet Split 2-Pane Layout
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
@@ -222,7 +223,7 @@ fun CalculatorContent(
                             FooterTagline()
                         }
 
-                        // Right Pane: Embedded Side History Panel
+                        // Right Pane: Embedded History Logs
                         EmbeddedHistoryPanel(
                             history = uiState.history,
                             onRecallExpression = { item ->
@@ -240,7 +241,7 @@ fun CalculatorContent(
                         )
                     }
                 } else if (isLandscapePhone) {
-                    // Rotated Phone Full-Screen Landscape Layout
+                    // Landscape Phone Layout
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -274,7 +275,6 @@ fun CalculatorContent(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Keypads Side-by-Side in Landscape
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -300,7 +300,7 @@ fun CalculatorContent(
                         FooterTagline()
                     }
                 } else {
-                    // Standard Screen Layout (Compact Window)
+                    // Standard Portrait Screen Layout
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -430,12 +430,11 @@ private fun TopHeaderBar(
             }
         }
 
-        // Header Actions: Scientific Mode, Angle Unit (DEG/RAD), & Sound Toggle
+        // Header Actions
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Scientific Mode Toggle Button
             HeaderPillButton(
                 icon = Icons.Default.Functions,
                 label = "SCI",
@@ -443,7 +442,6 @@ private fun TopHeaderBar(
                 onClick = onToggleScientific
             )
 
-            // Angle Unit Toggle Button (DEG / RAD)
             HeaderPillButton(
                 icon = Icons.Default.Autorenew,
                 label = if (angleUnit == AngleUnit.DEGREE) "DEG" else "RAD",
@@ -451,14 +449,13 @@ private fun TopHeaderBar(
                 onClick = onToggleAngleUnit
             )
 
-            // Sound Toggle Button
             IconButton(
                 onClick = onToggleSound,
                 modifier = Modifier
                     .size(38.dp)
                     .clip(CircleShape)
-                    .background(if (isSoundEnabled) CherryContainerDeep else SciFiGlassPanel)
-                    .border(1.dp, if (isSoundEnabled) NeonCherryPrimary else SciFiGlassBorder, CircleShape)
+                    .background(if (isSoundEnabled) CherryContainerDeep else GlassPanelBg)
+                    .border(1.dp, if (isSoundEnabled) NeonCherryPrimary else GlassPanelBorder, CircleShape)
             ) {
                 Icon(
                     imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
@@ -481,10 +478,10 @@ private fun HeaderPillButton(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(if (isActive) CherryContainerDeep else SciFiGlassPanel)
+            .background(if (isActive) CherryContainerDeep else GlassPanelBg)
             .border(
                 width = 1.dp,
-                color = if (isActive) NeonCherryPrimary else SciFiGlassBorder,
+                color = if (isActive) NeonCherryPrimary else GlassPanelBorder,
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable(onClick = onClick)
@@ -528,40 +525,6 @@ private fun FooterTagline() {
 @Preview(showBackground = true, device = "spec:width=411dp,height=891dp")
 @Composable
 fun CalculatorScreenPreview() {
-    CalculatorAppTheme {
-        CalculatorContent(
-            uiState = CalculatorUiState(
-                expression = "sin(45) + 12.5 × 8",
-                previewResult = "100.7071",
-                angleUnit = AngleUnit.DEGREE,
-                isScientificExpanded = true,
-                hasMemory = true
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
-@Composable
-fun CalculatorScreenTabletPreview() {
-    CalculatorAppTheme {
-        CalculatorContent(
-            uiState = CalculatorUiState(
-                expression = "sin(45) + 12.5 × 8",
-                previewResult = "100.7071",
-                angleUnit = AngleUnit.DEGREE,
-                isScientificExpanded = true,
-                hasMemory = true
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, device = "spec:width=891dp,height=411dp")
-@Composable
-fun CalculatorScreenLandscapePhonePreview() {
     CalculatorAppTheme {
         CalculatorContent(
             uiState = CalculatorUiState(

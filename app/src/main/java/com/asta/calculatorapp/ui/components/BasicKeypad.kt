@@ -13,6 +13,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.asta.calculatorapp.ui.viewmodel.CalculatorAction
 
+/**
+ * BasicKeypad:
+ * Main keypad layout for Cherry Calc containing standard digits, operators, and action buttons.
+ *
+ * Beginner explanation of layout structure:
+ * - Arranged in 5 neat rows.
+ * - Each cherry button is styled based on its type (DIGIT, OPERATOR, EQUALS, ACTION).
+ * - Row 5 contains 0, decimal point, parentheses, and the glowing Equals cherry!
+ */
 @Composable
 fun BasicKeypad(
     onAction: (CalculatorAction) -> Unit,
@@ -22,9 +31,9 @@ fun BasicKeypad(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer { clip = false },
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Row 1: AC, DEL, %, ÷
+        // --- ROW 1: AC, DEL, %, ÷ ---
         val pressedMap1 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow1Active = pressedMap1.values.any { it }
 
@@ -32,7 +41,7 @@ fun BasicKeypad(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(if (isRow1Active) 10f else 0f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "AC",
@@ -51,7 +60,7 @@ fun BasicKeypad(
             FuturisticButton(
                 text = "%",
                 onClick = { onAction(CalculatorAction.Operator("%")) },
-                buttonType = FuturisticButtonType.OPERATOR,
+                buttonType = FuturisticButtonType.ACTION,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap1[2] = pressed }
             )
@@ -64,7 +73,7 @@ fun BasicKeypad(
             )
         }
 
-        // Row 2: 7, 8, 9, ×
+        // --- ROW 2: 7, 8, 9, × ---
         val pressedMap2 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow2Active = pressedMap2.values.any { it }
 
@@ -72,7 +81,7 @@ fun BasicKeypad(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(if (isRow2Active) 10f else 0f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "7",
@@ -104,7 +113,7 @@ fun BasicKeypad(
             )
         }
 
-        // Row 3: 4, 5, 6, -
+        // --- ROW 3: 4, 5, 6, - ---
         val pressedMap3 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow3Active = pressedMap3.values.any { it }
 
@@ -112,7 +121,7 @@ fun BasicKeypad(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(if (isRow3Active) 10f else 0f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "4",
@@ -144,7 +153,7 @@ fun BasicKeypad(
             )
         }
 
-        // Row 4: 1, 2, 3, +
+        // --- ROW 4: 1, 2, 3, + ---
         val pressedMap4 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow4Active = pressedMap4.values.any { it }
 
@@ -152,7 +161,7 @@ fun BasicKeypad(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(if (isRow4Active) 10f else 0f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "1",
@@ -184,7 +193,7 @@ fun BasicKeypad(
             )
         }
 
-        // Row 5: 0, ., ( ), =
+        // --- ROW 5: 0, ., ( ), = ---
         val pressedMap5 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow5Active = pressedMap5.values.any { it }
 
@@ -192,7 +201,7 @@ fun BasicKeypad(
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(if (isRow5Active) 10f else 0f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "0",
@@ -210,7 +219,7 @@ fun BasicKeypad(
             )
             Row(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 FuturisticButton(
                     text = "(",

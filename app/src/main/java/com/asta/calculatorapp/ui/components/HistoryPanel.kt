@@ -56,10 +56,10 @@ import com.asta.calculatorapp.ui.theme.CherryContainerDeep
 import com.asta.calculatorapp.ui.theme.DarkBgPrimary
 import com.asta.calculatorapp.ui.theme.DarkBgSecondary
 import com.asta.calculatorapp.ui.theme.ErrorBright
+import com.asta.calculatorapp.ui.theme.GlassPanelBg
+import com.asta.calculatorapp.ui.theme.GlassPanelBorder
 import com.asta.calculatorapp.ui.theme.NeonCherryPrimary
 import com.asta.calculatorapp.ui.theme.NeonCherrySecondary
-import com.asta.calculatorapp.ui.theme.SciFiGlassBorder
-import com.asta.calculatorapp.ui.theme.SciFiGlassPanel
 import com.asta.calculatorapp.ui.theme.TextBright
 import com.asta.calculatorapp.ui.theme.TextDim
 import com.asta.calculatorapp.ui.theme.TextMuted
@@ -123,7 +123,7 @@ fun EmbeddedHistoryPanel(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         NeonCherryPrimary.copy(alpha = 0.4f),
-                        SciFiGlassBorder,
+                        GlassPanelBorder,
                         NeonCherrySecondary.copy(alpha = 0.2f)
                     )
                 ),
@@ -168,7 +168,7 @@ fun HistoryPanelContent(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Sheet/Panel Header: Title + Clear History + Close
+        // Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -221,8 +221,8 @@ fun HistoryPanelContent(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(SciFiGlassPanel)
-                            .border(1.dp, SciFiGlassBorder, CircleShape)
+                            .background(GlassPanelBg)
+                            .border(1.dp, GlassPanelBorder, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -276,10 +276,10 @@ fun HistoryPanelContent(
                 keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = SciFiGlassPanel,
-                    unfocusedContainerColor = SciFiGlassPanel,
+                    focusedContainerColor = GlassPanelBg,
+                    unfocusedContainerColor = GlassPanelBg,
                     focusedBorderColor = NeonCherrySecondary,
-                    unfocusedBorderColor = SciFiGlassBorder,
+                    unfocusedBorderColor = GlassPanelBorder,
                     focusedTextColor = TextBright,
                     unfocusedTextColor = TextBright,
                     cursorColor = NeonCherryPrimary
@@ -348,13 +348,13 @@ private fun HistoryCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(SciFiGlassPanel)
+            .background(GlassPanelBg)
             .border(
                 width = 1.dp,
                 brush = Brush.horizontalGradient(
                     colors = listOf(
                         NeonCherryPrimary.copy(alpha = 0.3f),
-                        SciFiGlassBorder
+                        GlassPanelBorder
                     )
                 ),
                 shape = RoundedCornerShape(16.dp)
@@ -388,7 +388,7 @@ private fun HistoryCard(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Recall Buttons: "Use Expression" & "Use Result"
+            // Recall Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -418,10 +418,10 @@ private fun RecallPillButton(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(if (isPrimary) CherryContainerDeep else SciFiGlassPanel)
+            .background(if (isPrimary) CherryContainerDeep else GlassPanelBg)
             .border(
                 width = 1.dp,
-                color = if (isPrimary) NeonCherryPrimary.copy(alpha = 0.8f) else SciFiGlassBorder,
+                color = if (isPrimary) NeonCherryPrimary.copy(alpha = 0.8f) else GlassPanelBorder,
                 shape = RoundedCornerShape(10.dp)
             )
             .clickable(onClick = onClick)

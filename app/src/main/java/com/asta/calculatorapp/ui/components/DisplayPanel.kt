@@ -46,14 +46,26 @@ import com.asta.calculatorapp.ui.theme.CherryAccentSoft
 import com.asta.calculatorapp.ui.theme.CherryContainerDeep
 import com.asta.calculatorapp.ui.theme.ErrorBright
 import com.asta.calculatorapp.ui.theme.ErrorContainer
+import com.asta.calculatorapp.ui.theme.GlassPanelBg
+import com.asta.calculatorapp.ui.theme.GlassPanelBorder
 import com.asta.calculatorapp.ui.theme.NeonCherryPrimary
 import com.asta.calculatorapp.ui.theme.NeonCherrySecondary
-import com.asta.calculatorapp.ui.theme.SciFiGlassBorder
-import com.asta.calculatorapp.ui.theme.SciFiGlassPanel
 import com.asta.calculatorapp.ui.theme.TextBright
 import com.asta.calculatorapp.ui.theme.TextDim
+import com.asta.calculatorapp.ui.theme.TextGlowPink
 import com.asta.calculatorapp.ui.theme.TextMuted
 
+/**
+ * DisplayPanel:
+ * Dark glass-style display panel at the top of Cherry Calc.
+ *
+ * Beginners note:
+ * - The display uses a dark frosted glass background with rounded corners (24.dp).
+ * - A glowing cherry gradient border wraps the panel.
+ * - Upper line shows the ongoing math expression in clean muted text.
+ * - Lower line shows the final computed result in large glowing cherry-pink numbers!
+ * - Text automatically shrinks if numbers get too long so they never overflow.
+ */
 @Composable
 fun DisplayPanel(
     expression: String,
@@ -70,7 +82,7 @@ fun DisplayPanel(
 ) {
     val exprScrollState = rememberScrollState()
 
-    // Automatically scroll to the right as expression grows
+    // Automatically scroll expression view to the end as numbers are typed
     LaunchedEffect(expression) {
         exprScrollState.animateScrollTo(exprScrollState.maxValue)
     }
@@ -79,14 +91,14 @@ fun DisplayPanel(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
-            .background(SciFiGlassPanel)
+            .background(GlassPanelBg)
             .border(
                 width = 1.5.dp,
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        NeonCherryPrimary.copy(alpha = 0.5f),
-                        SciFiGlassBorder,
-                        NeonCherrySecondary.copy(alpha = 0.3f)
+                        NeonCherryPrimary.copy(alpha = 0.55f),
+                        GlassPanelBorder,
+                        NeonCherrySecondary.copy(alpha = 0.35f)
                     )
                 ),
                 shape = RoundedCornerShape(24.dp)
@@ -96,13 +108,13 @@ fun DisplayPanel(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Status Row: Angle unit indicator, active mode indicators, and history icon
+            // --- TOP STATUS BAR: Mode badges + History button ---
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left side: Angle Unit Badge + Mode Badges
+                // Mode indicator pills
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -120,14 +132,14 @@ fun DisplayPanel(
                     }
                 }
 
-                // Right side: History button
+                // Calculation logs / History icon button
                 IconButton(
                     onClick = onToggleHistory,
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
                         .background(CherryContainerDeep.copy(alpha = 0.6f))
-                        .border(0.8.dp, SciFiGlassBorder, CircleShape)
+                        .border(0.8.dp, GlassPanelBorder, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.History,
@@ -140,7 +152,7 @@ fun DisplayPanel(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Error Banner (Animated slide down)
+            // --- ANIMATED ERROR BANNER ---
             AnimatedVisibility(
                 visible = isErrorState && !errorMessage.isNullOrEmpty(),
                 enter = expandVertically() + fadeIn(),
@@ -189,11 +201,11 @@ fun DisplayPanel(
                 }
             }
 
-            // Main Expression View (Scrollable horizontally)
+            // --- UPPER LINE: Math Expression (Smaller font, scrollable) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(44.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Row(
@@ -203,12 +215,20 @@ fun DisplayPanel(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val displayText = if (expression.isEmpty() && result.isEmpty()) "0" else expression
+                    // Auto-scale font size if expression gets long
+                    val exprFontSize = when {
+                        displayText.length > 24 -> 18.sp
+                        displayText.length > 16 -> 22.sp
+                        else -> 28.sp
+                    }
+
                     Text(
-                        text = if (expression.isEmpty() && result.isEmpty()) "0" else expression,
-                        color = if (expression.isEmpty() && result.isEmpty()) TextDim else TextBright,
-                        fontSize = if (expression.length > 18) 24.sp else 32.sp,
+                        text = displayText,
+                        color = if (expression.isEmpty() && result.isEmpty()) TextDim else TextMuted,
+                        fontSize = exprFontSize,
                         fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.End
                     )
                 }
@@ -216,29 +236,40 @@ fun DisplayPanel(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Result / Preview Section with glowing effect
+            // --- LOWER LINE: Glowing Cherry-Pink Numbers (Result / Preview) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(38.dp),
+                    .height(42.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 if (result.isNotEmpty()) {
-                    // Computed Result
+                    // Final Calculated Result - Glowing Cherry-Pink
+                    val resultFontSize = when {
+                        result.length > 18 -> 20.sp
+                        result.length > 12 -> 24.sp
+                        else -> 32.sp
+                    }
+
                     Text(
                         text = "= $result",
-                        color = NeonCherrySecondary,
-                        fontSize = 28.sp,
+                        color = TextGlowPink,
+                        fontSize = resultFontSize,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
                     )
                 } else if (previewResult.isNotEmpty()) {
-                    // Real-time Live Preview (transparent until = is clicked)
+                    // Live Preview Result
+                    val previewFontSize = when {
+                        previewResult.length > 18 -> 18.sp
+                        else -> 22.sp
+                    }
+
                     Text(
                         text = "= $previewResult",
-                        color = CherryAccentSoft.copy(alpha = 0.4f),
-                        fontSize = 20.sp,
+                        color = CherryAccentSoft.copy(alpha = 0.5f),
+                        fontSize = previewFontSize,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.End
@@ -262,7 +293,7 @@ private fun StatusBadge(
             .background(if (isActive) activeColor.copy(alpha = 0.15f) else Color.Transparent)
             .border(
                 width = 0.8.dp,
-                color = if (isActive) activeColor.copy(alpha = 0.6f) else SciFiGlassBorder,
+                color = if (isActive) activeColor.copy(alpha = 0.6f) else GlassPanelBorder,
                 shape = RoundedCornerShape(8.dp)
             )
             .then(

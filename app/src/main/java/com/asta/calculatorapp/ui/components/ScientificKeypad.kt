@@ -13,6 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.asta.calculatorapp.ui.viewmodel.CalculatorAction
 
+/**
+ * ScientificKeypad:
+ * Optional scientific panel containing trigonometry, functions, and memory operations for Cherry Calc.
+ */
 @Composable
 fun ScientificKeypad(
     isInverse: Boolean,
@@ -24,9 +28,9 @@ fun ScientificKeypad(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer { clip = false },
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Row 1: Memory Operations + INV Toggle
+        // --- ROW 1: 2nd, MC, MR, M+, M- ---
         val pressedMap1 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow1Active = isInverse || hasMemory || pressedMap1.values.any { it }
 
@@ -75,7 +79,7 @@ fun ScientificKeypad(
             )
         }
 
-        // Row 2: Trig functions & Constants
+        // --- ROW 2: Trig Functions & Constants ---
         val pressedMap2 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow2Active = pressedMap2.values.any { it }
 
@@ -128,7 +132,7 @@ fun ScientificKeypad(
             )
         }
 
-        // Row 3: Powers, Logs & Functions
+        // --- ROW 3: Powers & Logarithms ---
         val pressedMap3 = remember { mutableStateMapOf<Int, Boolean>() }
         val isRow3Active = pressedMap3.values.any { it }
 
