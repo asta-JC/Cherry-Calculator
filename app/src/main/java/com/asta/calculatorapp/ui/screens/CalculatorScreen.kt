@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asta.calculatorapp.domain.evaluator.AngleUnit
@@ -188,7 +189,9 @@ fun CalculatorContent(
                                 errorMessage = uiState.errorMessage,
                                 onToggleHistory = { showHistorySheet = true },
                                 onDismissError = { onAction(CalculatorAction.DismissError) },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .zIndex(10f)
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -270,7 +273,9 @@ fun CalculatorContent(
                             errorMessage = uiState.errorMessage,
                             onToggleHistory = { showHistorySheet = true },
                             onDismissError = { onAction(CalculatorAction.DismissError) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .zIndex(10f)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -330,7 +335,9 @@ fun CalculatorContent(
                             errorMessage = uiState.errorMessage,
                             onToggleHistory = { showHistorySheet = true },
                             onDismissError = { onAction(CalculatorAction.DismissError) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .zIndex(10f)
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))

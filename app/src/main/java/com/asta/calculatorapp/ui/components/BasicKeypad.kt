@@ -15,12 +15,13 @@ import com.asta.calculatorapp.ui.viewmodel.CalculatorAction
 
 /**
  * BasicKeypad:
- * Main keypad layout for Cherry Calc containing standard digits, operators, and action buttons.
+ * Main keypad layout for Cherry Calc containing realistic 3D cherry buttons with upward curved stems.
  *
- * Beginner explanation of layout structure:
- * - Arranged in 5 neat rows.
- * - Each cherry button is styled based on its type (DIGIT, OPERATOR, EQUALS, ACTION).
- * - Row 5 contains 0, decimal point, parentheses, and the glowing Equals cherry!
+ * Visual hierarchy and 3D layering:
+ * - Arranged in 5 rows with stems gracefully arching upward.
+ * - Stems from Row N extend upward behind Row N-1 (achieved by top-to-bottom z-indexing).
+ * - Row 1 features ÷ cherry with a realistic green leaf on its stem.
+ * - Row 5 contains 0, decimal point, connected Twin Cherry for "( )", and the glowing Equals cherry!
  */
 @Composable
 fun BasicKeypad(
@@ -31,7 +32,7 @@ fun BasicKeypad(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer { clip = false },
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // --- ROW 1: AC, DEL, %, ÷ ---
         val pressedMap1 = remember { mutableStateMapOf<Int, Boolean>() }
@@ -40,13 +41,15 @@ fun BasicKeypad(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isRow1Active) 10f else 0f),
+                .graphicsLayer { clip = false }
+                .zIndex(if (isRow1Active) 25f else 5f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "AC",
                 onClick = { onAction(CalculatorAction.Clear) },
                 buttonType = FuturisticButtonType.ACTION,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap1[0] = pressed }
             )
@@ -54,6 +57,7 @@ fun BasicKeypad(
                 text = "DEL",
                 onClick = { onAction(CalculatorAction.Delete) },
                 buttonType = FuturisticButtonType.ACTION,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap1[1] = pressed }
             )
@@ -61,6 +65,7 @@ fun BasicKeypad(
                 text = "%",
                 onClick = { onAction(CalculatorAction.Operator("%")) },
                 buttonType = FuturisticButtonType.ACTION,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap1[2] = pressed }
             )
@@ -68,6 +73,8 @@ fun BasicKeypad(
                 text = "÷",
                 onClick = { onAction(CalculatorAction.Operator("÷")) },
                 buttonType = FuturisticButtonType.OPERATOR,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
+                hasLeaf = true,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap1[3] = pressed }
             )
@@ -80,13 +87,15 @@ fun BasicKeypad(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isRow2Active) 10f else 0f),
+                .graphicsLayer { clip = false }
+                .zIndex(if (isRow2Active) 25f else 4f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "7",
                 onClick = { onAction(CalculatorAction.Digit("7")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap2[0] = pressed }
             )
@@ -94,6 +103,7 @@ fun BasicKeypad(
                 text = "8",
                 onClick = { onAction(CalculatorAction.Digit("8")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap2[1] = pressed }
             )
@@ -101,6 +111,7 @@ fun BasicKeypad(
                 text = "9",
                 onClick = { onAction(CalculatorAction.Digit("9")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap2[2] = pressed }
             )
@@ -108,6 +119,7 @@ fun BasicKeypad(
                 text = "×",
                 onClick = { onAction(CalculatorAction.Operator("×")) },
                 buttonType = FuturisticButtonType.OPERATOR,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap2[3] = pressed }
             )
@@ -120,13 +132,15 @@ fun BasicKeypad(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isRow3Active) 10f else 0f),
+                .graphicsLayer { clip = false }
+                .zIndex(if (isRow3Active) 25f else 3f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "4",
                 onClick = { onAction(CalculatorAction.Digit("4")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap3[0] = pressed }
             )
@@ -134,6 +148,7 @@ fun BasicKeypad(
                 text = "5",
                 onClick = { onAction(CalculatorAction.Digit("5")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap3[1] = pressed }
             )
@@ -141,6 +156,7 @@ fun BasicKeypad(
                 text = "6",
                 onClick = { onAction(CalculatorAction.Digit("6")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap3[2] = pressed }
             )
@@ -148,6 +164,7 @@ fun BasicKeypad(
                 text = "-",
                 onClick = { onAction(CalculatorAction.Operator("-")) },
                 buttonType = FuturisticButtonType.OPERATOR,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap3[3] = pressed }
             )
@@ -160,13 +177,15 @@ fun BasicKeypad(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isRow4Active) 10f else 0f),
+                .graphicsLayer { clip = false }
+                .zIndex(if (isRow4Active) 25f else 2f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "1",
                 onClick = { onAction(CalculatorAction.Digit("1")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap4[0] = pressed }
             )
@@ -174,6 +193,7 @@ fun BasicKeypad(
                 text = "2",
                 onClick = { onAction(CalculatorAction.Digit("2")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap4[1] = pressed }
             )
@@ -181,6 +201,7 @@ fun BasicKeypad(
                 text = "3",
                 onClick = { onAction(CalculatorAction.Digit("3")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap4[2] = pressed }
             )
@@ -188,6 +209,7 @@ fun BasicKeypad(
                 text = "+",
                 onClick = { onAction(CalculatorAction.Operator("+")) },
                 buttonType = FuturisticButtonType.OPERATOR,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap4[3] = pressed }
             )
@@ -200,13 +222,15 @@ fun BasicKeypad(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isRow5Active) 10f else 0f),
+                .graphicsLayer { clip = false }
+                .zIndex(if (isRow5Active) 25f else 1f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             FuturisticButton(
                 text = "0",
                 onClick = { onAction(CalculatorAction.Digit("0")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_LEFT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap5[0] = pressed }
             )
@@ -214,34 +238,23 @@ fun BasicKeypad(
                 text = ".",
                 onClick = { onAction(CalculatorAction.Digit(".")) },
                 buttonType = FuturisticButtonType.DIGIT,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
                 onPressChanged = { pressed -> pressedMap5[1] = pressed }
             )
-            Row(
+            TwinCherryButton(
+                onLeftClick = { onAction(CalculatorAction.ParenthesisOpen) },
+                onRightClick = { onAction(CalculatorAction.ParenthesisClose) },
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                FuturisticButton(
-                    text = "(",
-                    onClick = { onAction(CalculatorAction.ParenthesisOpen) },
-                    buttonType = FuturisticButtonType.SCIENTIFIC,
-                    modifier = Modifier.weight(1f),
-                    onPressChanged = { pressed -> pressedMap5[2] = pressed }
-                )
-                FuturisticButton(
-                    text = ")",
-                    onClick = { onAction(CalculatorAction.ParenthesisClose) },
-                    buttonType = FuturisticButtonType.SCIENTIFIC,
-                    modifier = Modifier.weight(1f),
-                    onPressChanged = { pressed -> pressedMap5[3] = pressed }
-                )
-            }
+                onPressChanged = { pressed -> pressedMap5[2] = pressed }
+            )
             FuturisticButton(
                 text = "=",
                 onClick = { onAction(CalculatorAction.Calculate) },
                 buttonType = FuturisticButtonType.EQUALS,
+                stemStyle = StemStyle.SLIGHT_RIGHT,
                 modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap5[4] = pressed }
+                onPressChanged = { pressed -> pressedMap5[3] = pressed }
             )
         }
     }

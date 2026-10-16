@@ -1,48 +1,50 @@
+<div align="center">
+
 # 🍒 Cherry Calculator
+
+<p align="center">
+  <img src="app/src/main/res/drawable/icon.png" width="108" alt="Cherry Calculator Logo" />
+</p>
 
 > A modern, elegant, and feature-packed scientific calculator built with **Jetpack Compose** and **Material 3**, featuring a gorgeous sci-fi glassmorphic dark theme with cherry accents. 🚀✨
 
+</div>
+
 ---
 
-## 📱 Screenshots & UI Preview
+## 📱 Overview
 
-<p align="center">
-  <img src="app/src/main/res/drawable/icon.png" width="100" alt="Cherry Calculator Logo">
-</p>
-
-| Standard Calculator | Scientific Mode | Calculation Logs |
-| :---: | :---: | :---: |
-| ![Standard Calculator](screenshots/1.jpg) | ![Scientific Mode](screenshots/2.jpg) | ![Calculation Logs](screenshots/3.jpg) |
+**Cherry Calculator** is a fast, responsive scientific calculator engineered for Android. It combines everyday arithmetic convenience with advanced scientific computing capabilities. Designed with an OLED dark aesthetic and custom cherry neon gradients, it features real-time live formula previews, calculation logs, customizable haptic and audio feedback, and full landscape and tablet layout adaptations.
 
 ---
 
 ## ✨ Key Features
 
 - 🔬 **Scientific & Basic Keypads**: Easily toggle between standard arithmetic and advanced scientific functions (`sin`, `cos`, `tan`, `ln`, `log`, $\sqrt{}$, power $x^n$, factorial $x!$, constants $\pi$ and $e$).
-- ⚡ **Real-time Live Preview**: See instant calculation previews as you type expressions.
-- 📐 **Angle Unit Toggle**: Seamlessly switch between Degrees (**DEG**) and Radians (**RAD**).
+- ⚡ **Real-time Live Preview**: Instant calculation preview displays expressions and results dynamically as you type.
+- 📐 **Angle Mode Toggle**: Seamlessly switch between Degrees (**DEG**) and Radians (**RAD**).
 - 🕒 **Calculation History**: Keep track of past calculations with instant recall for expressions and results.
-- 🔊 **Interactive Feedback**: Satisfying audio and haptic feedback toggles for every button press.
-- 📱 **Adaptive Layouts**: Fully responsive design optimized for both compact phones and large screen tablets / foldables (split 2-pane layout).
-- 🎨 **Sci-Fi Glassmorphic Theme**: Stunning dark mode aesthetic powered by custom cherry neon gradients and smooth Material 3 animations.
-- 🔄 **v1.1 Rotation & Responsiveness**: Seamless full-screen landscape layout optimization for rotated phones featuring side-by-side keypads and bug fixes.
+- 🔊 **Interactive Feedback**: Satisfying audio and tactile haptic feedback toggles for every button press.
+- 📱 **Adaptive Layouts**: Optimized for single-hand portrait phones, landscape mode with side-by-side keypads, and large-screen foldables and tablets.
+- 🎨 **Sci-Fi Cherry Theme**: Stunning OLED dark aesthetic powered by cherry neon gradients and smooth Material 3 animations.
+
+---
+
+## 📸 Screenshots & UI Preview
+
+| Standard Calculator | Scientific Mode | Calculation Logs |
+| :---: | :---: | :---: |
+| <img src="screenshots/1.jpg" width="220" alt="Standard Calculator" /> | <img src="screenshots/2.jpg" width="220" alt="Scientific Mode" /> | <img src="screenshots/3.jpg" width="220" alt="Calculation Logs" /> |
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
 - **UI Toolkit**: [Jetpack Compose](https://developer.android.com/jetpack/compose) & [Material 3](https://m3.material.io/)
-- **Architecture**: MVVM (Model-View-ViewModel) with Kotlin `StateFlow` and unidirectional data flow.
-- **Language**: 100% Kotlin
-- **Evaluation Engine**: Custom robust mathematical expression evaluator supporting operator precedence, parentheses, and trigonometric angle modes.
-- **State Management**: Lifecycle-aware state collection (`collectAsStateWithLifecycle`).
-
----
-
-## 🚀 What's New in v1.1 🌟
-- **Fixed Phone Rotation & Landscape Layout**: Rotated phones now expand into a gorgeous full-screen layout with side-by-side keypads (Scientific & Basic) for effortless 10-foot usability without scrolling.
-- **Display & Result Refinements**: Removed background glow backlight and result shadow backing; preview results are now cleanly translucent until `=` is computed.
-- **Calculation Logs Spacing**: Added clean padding and separation between delete and close buttons in the calculation history menu.
+- **Architecture**: MVVM (Model-View-ViewModel) with Kotlin `StateFlow` and unidirectional data flow
+- **Language**: 100% [Kotlin](https://kotlinlang.org/)
+- **Evaluation Engine**: Custom robust mathematical expression evaluator supporting operator precedence, parentheses, and trigonometric angle modes
+- **State Management**: Lifecycle-aware state collection (`collectAsStateWithLifecycle`)
 
 ---
 
@@ -62,17 +64,36 @@ com.asta.calculatorapp/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started & Build Instructions
+
+### Prerequisites
+- Android Studio Ladybug or newer
+- JDK 17 or higher
+- Android SDK 24+ (Target SDK 34+)
+
+### Build Steps
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/asta-JC/Cherry-Calculator.git
+   cd CherryCalculator
    ```
+
 2. **Open in Android Studio**:
-   - Open Android Studio and select **Open an Existing Project**.
-   - Navigate to the cloned `Calculatorapp` directory.
+   - Open Android Studio and select **Open**.
+   - Navigate to the cloned `CherryCalculator` directory and let Gradle sync.
+
 3. **Build & Run**:
-   - Sync Gradle and run the app on an Android emulator or physical device (Min SDK 24+, Target SDK 34+).
+   - Connect an Android device or start an emulator.
+   - Run the app via Android Studio or execute via terminal:
+     ```bash
+     ./gradlew :app:assembleDebug
+     ```
+
+4. **Run Unit Tests**:
+   ```bash
+   ./gradlew :app:testDebugUnitTest
+   ```
 
 ---
 

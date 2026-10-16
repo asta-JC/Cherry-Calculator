@@ -24,24 +24,24 @@ val CherryStemDark = Color(0xFF2E7D32)     // Darker shading for stem curvature
 val CherryLeafGreen = Color(0xFF81C784)    // Vibrant leaf green
 
 // 1. Classic Cherry Red (For Number Buttons 0-9 and .)
-val CherryClassicCenter = Color(0xFFFF2E55)  // Vibrant bright cherry red (center highlight)
-val CherryClassicEdge = Color(0xFF7A001B)    // Deep dark cherry red (outer edge)
-val CherryClassicGlow = Color(0x66FF1744)    // Ambient glow behind classic cherry
+val CherryClassicCenter = Color(0xFFB5092B)  // Vibrant deep cherry red (center highlight)
+val CherryClassicEdge = Color(0xFF4A0012)    // Deep dark burgundy red (outer edge)
+val CherryClassicGlow = Color(0x66B5092B)    // Ambient glow behind classic cherry
 
 // 2. Deep Burgundy / Dark Cherry (For Operator Buttons +, -, ×, ÷)
-val CherryOperatorCenter = Color(0xFFE91E63) // Bright pink-burgundy center
-val CherryOperatorEdge = Color(0xFF4A001F)   // Dark burgundy edge
-val CherryOperatorGlow = Color(0x88D81B60)   // Rich pink/burgundy glow
+val CherryOperatorCenter = Color(0xFFA30626) // Deep crimson center
+val CherryOperatorEdge = Color(0xFF3B000E)   // Dark wine edge
+val CherryOperatorGlow = Color(0x66A30626)   // Rich burgundy glow
 
 // 3. Bright Red-to-Pink (For Equals Button =)
-val CherryEqualsStart = Color(0xFFFF1744)    // Bright glowing cherry red
-val CherryEqualsEnd = Color(0xFFFF4081)      // Vibrant cherry pink
-val CherryEqualsGlow = Color(0xAAFF1744)     // Strong pulsing glow aura
+val CherryEqualsStart = Color(0xFFFF2655)    // Bright glowing cherry red
+val CherryEqualsEnd = Color(0xFFC7002E)      // Deep radiant ruby
+val CherryEqualsGlow = Color(0xFFFF1744)     // Strong pulsing glow aura
 
 // 4. Lighter Pink-Rose Cherry (For Clear, Delete, %, ± Action Buttons)
-val CherryActionCenter = Color(0xFFFF6289)   // Lighter pink-rose center
-val CherryActionEdge = Color(0xFF8E1E43)     // Deep rose edge
-val CherryActionGlow = Color(0x66FF6289)     // Soft pink-rose glow
+val CherryActionCenter = Color(0xFFB0082A)   // Classic rich cherry center
+val CherryActionEdge = Color(0xFF450011)     // Deep wine edge
+val CherryActionGlow = Color(0x66B0082A)     // Soft cherry glow
 
 // 5. Scientific Buttons Cherry Theme
 val CherrySciFiCenter = Color(0xFFC2185B)    // Rose-violet center
