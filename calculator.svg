@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512">
+  <!-- Background -->
+  <rect width="108" height="108" rx="24" fill="#F50D46"/>
+  
+  <!-- Cherry Stem & Leaf -->
+  <path d="M54 32 C54 23, 61 18, 67 16" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M55 24 C46 18, 39 22, 43 28 C47 31, 52 28, 55 24 Z" fill="#FFFFFF"/>
+
+  <!-- Calculator Body -->
+  <rect x="31" y="32" width="46" height="46" rx="11" fill="#FFFFFF"/>
+
+  <!-- Minus (-) -->
+  <line x1="39" y1="45" x2="49" y2="45" stroke="#F50D46" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Multiply (×) -->
+  <line x1="60" y1="41" x2="68" y2="49" stroke="#F50D46" stroke-width="4" stroke-linecap="round"/>
+  <line x1="68" y1="41" x2="60" y2="49" stroke="#F50D46" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Plus (+) -->
+  <line x1="39" y1="64" x2="49" y2="64" stroke="#F50D46" stroke-width="4" stroke-linecap="round"/>
+  <line x1="44" y1="59" x2="44" y2="69" stroke="#F50D46" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Equals (=) -->
+  <line x1="59" y1="61" x2="69" y2="61" stroke="#F50D46" stroke-width="3.8" stroke-linecap="round"/>
+  <line x1="59" y1="67" x2="69" y2="67" stroke="#F50D46" stroke-width="3.8" stroke-linecap="round"/>
+</svg>
