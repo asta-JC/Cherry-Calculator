@@ -9,6 +9,10 @@
     <img src="https://img.shields.io/badge/built_with-Kotlin_%26_Compose-78616B?style=flat-square" alt="Built with Kotlin and Compose" />
   </p>
   <p>
+    <a href="https://github.com/asta-JC/Cherry-Calculator/releases/download/v1.2/Cherry-Calculator_v1.2.apk"><strong>Download APK · v1.2</strong></a> ·
+    <a href="https://github.com/asta-JC/Cherry-Calculator/releases/tag/v1.2">Release notes</a>
+  </p>
+  <p>
     <a href="#screenshots">Screenshots</a> ·
     <a href="#features">Features</a> ·
     <a href="#getting-started">Get started</a> ·
@@ -56,6 +60,10 @@ Captured on a physical Samsung Galaxy S22 Ultra with the production Compose scre
 | Appearance | Saved locally and restored on launch |
 
 ## Getting started
+
+### Download
+
+Install [Cherry-Calculator_v1.2.apk](https://github.com/asta-JC/Cherry-Calculator/releases/download/v1.2/Cherry-Calculator_v1.2.apk) from [GitHub Releases](https://github.com/asta-JC/Cherry-Calculator/releases/tag/v1.2). This is a **debug/test-signed** build using the existing development certificate. The release includes `SHA256SUMS.txt` for download verification.
 
 ### Requirements
 
