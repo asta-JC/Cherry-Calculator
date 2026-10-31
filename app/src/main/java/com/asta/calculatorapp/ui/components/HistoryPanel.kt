@@ -1,69 +1,31 @@
 package com.asta.calculatorapp.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.asta.calculatorapp.ui.theme.CherryContainerDeep
-import com.asta.calculatorapp.ui.theme.DarkBgPrimary
-import com.asta.calculatorapp.ui.theme.DarkBgSecondary
-import com.asta.calculatorapp.ui.theme.ErrorBright
-import com.asta.calculatorapp.ui.theme.GlassPanelBg
-import com.asta.calculatorapp.ui.theme.GlassPanelBorder
-import com.asta.calculatorapp.ui.theme.NeonCherryPrimary
-import com.asta.calculatorapp.ui.theme.NeonCherrySecondary
-import com.asta.calculatorapp.ui.theme.TextBright
-import com.asta.calculatorapp.ui.theme.TextDim
-import com.asta.calculatorapp.ui.theme.TextMuted
 import com.asta.calculatorapp.ui.viewmodel.CalculationHistoryItem
+import java.text.DateFormat
+import java.util.Calendar
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,35 +35,15 @@ fun HistorySheet(
     onRecallResult: (CalculationHistoryItem) -> Unit,
     onClearHistory: () -> Unit,
     onDismiss: () -> Unit,
-    sheetState: SheetState = rememberModalBottomSheetState()
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = DarkBgSecondary,
-        scrimColor = DarkBgPrimary.copy(alpha = 0.75f),
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.75f)
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-        ) {
-            HistoryPanelContent(
-                history = history,
-                onRecallExpression = { item ->
-                    onRecallExpression(item)
-                    onDismiss()
-                },
-                onRecallResult = { item ->
-                    onRecallResult(item)
-                    onDismiss()
-                },
-                onClearHistory = onClearHistory,
-                onClose = onDismiss
-            )
-        }
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)) {
+        HistoryPanelContent(history,
+            { onRecallExpression(it); onDismiss() },
+            { onRecallResult(it); onDismiss() }, onClearHistory, onDismiss,
+            Modifier.fillMaxHeight(0.92f).imePadding().padding(horizontal = 20.dp))
     }
 }
 
@@ -114,30 +56,9 @@ fun EmbeddedHistoryPanel(
     onClose: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(24.dp))
-            .background(DarkBgSecondary)
-            .border(
-                width = 1.5.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        NeonCherryPrimary.copy(alpha = 0.4f),
-                        GlassPanelBorder,
-                        NeonCherrySecondary.copy(alpha = 0.2f)
-                    )
-                ),
-                shape = RoundedCornerShape(24.dp)
-            )
-            .padding(16.dp)
-    ) {
-        HistoryPanelContent(
-            history = history,
-            onRecallExpression = onRecallExpression,
-            onRecallResult = onRecallResult,
-            onClearHistory = onClearHistory,
-            onClose = onClose
-        )
+    Surface(modifier, shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface) {
+        HistoryPanelContent(history, onRecallExpression, onRecallResult, onClearHistory,
+            onClose, Modifier.padding(16.dp))
     }
 }
 
@@ -150,188 +71,90 @@ fun HistoryPanelContent(
     onClose: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
-
-    val filteredHistory = remember(history, searchQuery) {
-        if (searchQuery.isBlank()) {
-            history
-        } else {
-            val query = searchQuery.trim().lowercase()
-            history.filter { item ->
-                item.expression.lowercase().contains(query) ||
-                        item.result.lowercase().contains(query)
-            }
-        }
+    var query by rememberSaveable { mutableStateOf("") }
+    var menuOpen by remember { mutableStateOf(false) }
+    var confirmClear by rememberSaveable { mutableStateOf(false) }
+    val focus = LocalFocusManager.current
+    val listState = rememberLazyListState()
+    val filtered = remember(history, query) {
+        val term = query.trim()
+        history.filter { term.isEmpty() || it.expression.contains(term, ignoreCase = true) || it.result.contains(term, ignoreCase = true) }
     }
+    val groups = remember(filtered) { filtered.groupBy { dateLabel(it.timestamp) } }
+    val colors = MaterialTheme.colorScheme
 
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.History,
-                    contentDescription = null,
-                    tint = NeonCherrySecondary,
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "CALCULATION LOGS",
-                    color = TextBright,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold
-                )
+    if (confirmClear) AlertDialog(onDismissRequest = { confirmClear = false },
+        icon = { Icon(Icons.Outlined.DeleteOutline, null) },
+        title = { Text("Clear history?") },
+        text = { Text("This removes all calculations from your history. Your current calculation stays on the calculator.") },
+        confirmButton = { TextButton(onClick = {
+            onClearHistory(); query = ""; confirmClear = false
+        }) { Text("Clear history") } },
+        dismissButton = { TextButton(onClick = { confirmClear = false }) { Text("Keep history") } })
+
+    Column(modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("History", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+                Text(if (history.isEmpty()) "A place for your recent calculations"
+                    else "${history.size} ${if (history.size == 1) "calculation" else "calculations"} · tap to reuse a result",
+                    style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                if (history.isNotEmpty()) {
-                    IconButton(
-                        onClick = onClearHistory,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(CherryContainerDeep)
-                            .border(1.dp, ErrorBright.copy(alpha = 0.5f), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Clear History",
-                            tint = ErrorBright,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-
-                if (onClose != null) {
-                    IconButton(
-                        onClick = onClose,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(GlassPanelBg)
-                            .border(1.dp, GlassPanelBorder, CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = TextMuted,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+            if (history.isNotEmpty()) Box {
+                IconButton(onClick = { menuOpen = true }) { Icon(Icons.Outlined.MoreVert, "History options") }
+                DropdownMenu(menuOpen, { menuOpen = false }) {
+                    DropdownMenuItem(text = { Text("Clear history") },
+                        leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null) },
+                        onClick = { menuOpen = false; confirmClear = true })
                 }
             }
+            if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, "Close history") }
         }
+        if (history.isNotEmpty()) OutlinedTextField(value = query, onValueChange = { query = it },
+            modifier = Modifier.fillMaxWidth(), singleLine = true,
+            placeholder = { Text("Search calculations") },
+            leadingIcon = { Icon(Icons.Outlined.Search, null) },
+            trailingIcon = { if (query.isNotEmpty()) IconButton(onClick = { query = "" }) {
+                Icon(Icons.Outlined.Close, "Clear search")
+            } }, shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { focus.clearFocus() }),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = colors.surface,
+                unfocusedContainerColor = colors.surface,
+                unfocusedBorderColor = colors.outlineVariant))
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Search Field
-        if (history.isNotEmpty() || searchQuery.isNotEmpty()) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = "Search logs...",
-                        color = TextMuted,
-                        fontSize = 13.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = NeonCherrySecondary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Clear Search",
-                                tint = TextMuted,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
+        LazyColumn(Modifier.weight(1f).fillMaxWidth(), state = listState,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 24.dp)) {
+            if (filtered.isEmpty()) item {
+                Column(Modifier.fillParentMaxHeight().fillMaxWidth().padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center) {
+                    Surface(shape = RoundedCornerShape(24.dp), color = colors.primaryContainer) {
+                        Icon(if (history.isEmpty()) Icons.Outlined.History else Icons.Outlined.Search,
+                            null, Modifier.padding(20.dp).size(32.dp), tint = colors.onPrimaryContainer)
                     }
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = GlassPanelBg,
-                    unfocusedContainerColor = GlassPanelBg,
-                    focusedBorderColor = NeonCherrySecondary,
-                    unfocusedBorderColor = GlassPanelBorder,
-                    focusedTextColor = TextBright,
-                    unfocusedTextColor = TextBright,
-                    cursorColor = NeonCherryPrimary
-                )
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        // List Content
-        if (history.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "NO RECENT CALCULATIONS",
-                    color = TextDim,
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Monospace,
-                    textAlign = TextAlign.Center
-                )
+                    Spacer(Modifier.height(20.dp))
+                    Text(if (history.isEmpty()) "No calculations yet" else "No matches",
+                        style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(8.dp))
+                    Text(if (history.isEmpty()) "Your results appear here after you press equals."
+                        else "Try a different number or expression.",
+                        textAlign = TextAlign.Center, color = colors.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium)
+                    if (history.isNotEmpty() || onClose != null) TextButton(onClick = { if (history.isEmpty()) onClose?.invoke() else query = "" }) {
+                        Text(if (history.isEmpty()) "Start calculating" else "Clear search")
+                    }
+                }
             }
-        } else if (filteredHistory.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "NO LOGS MATCHING \"$searchQuery\"",
-                    color = TextDim,
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.Monospace,
-                    textAlign = TextAlign.Center
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(filteredHistory) { item ->
-                    HistoryCard(
-                        item = item,
-                        onRecallExpression = { onRecallExpression(item) },
-                        onRecallResult = { onRecallResult(item) }
-                    )
+            groups.forEach { (day, entries) ->
+                item(key = "day:$day") {
+                    Text(day, Modifier.padding(top = 8.dp, bottom = 4.dp),
+                        style = MaterialTheme.typography.labelLarge, color = colors.onSurfaceVariant)
+                }
+                items(entries, key = { it.id }) { entry ->
+                    HistoryEntry(entry, { onRecallExpression(entry) }, { onRecallResult(entry) })
                 }
             }
         }
@@ -339,101 +162,43 @@ fun HistoryPanelContent(
 }
 
 @Composable
-private fun HistoryCard(
-    item: CalculationHistoryItem,
-    onRecallExpression: () -> Unit,
-    onRecallResult: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(GlassPanelBg)
-            .border(
-                width = 1.dp,
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        NeonCherryPrimary.copy(alpha = 0.3f),
-                        GlassPanelBorder
-                    )
-                ),
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(14.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Expression
-            Text(
-                text = item.expression,
-                color = TextMuted,
-                fontSize = 15.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            // Result
-            Text(
-                text = "= ${item.result}",
-                color = NeonCherrySecondary,
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Recall Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RecallPillButton(
-                    label = "Use Expression",
-                    onClick = onRecallExpression
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                RecallPillButton(
-                    label = "Use Result",
-                    onClick = onRecallResult,
-                    isPrimary = true
-                )
+private fun HistoryEntry(item: CalculationHistoryItem, onEdit: () -> Unit, onUseResult: () -> Unit) {
+    var options by remember { mutableStateOf(false) }
+    val time = remember(item.timestamp) { DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(item.timestamp)) }
+    val colors = MaterialTheme.colorScheme
+    Surface(shape = RoundedCornerShape(18.dp), color = colors.primaryContainer.copy(alpha = 0.25f)) {
+        Row(Modifier.fillMaxWidth().clickable(role = Role.Button,
+            onClickLabel = "Use result ${item.result}", onClick = onUseResult).padding(start = 16.dp, top = 12.dp, bottom = 16.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(time, style = MaterialTheme.typography.labelSmall, color = colors.onSurfaceVariant)
+                Text(item.expression, style = MaterialTheme.typography.bodyLarge, color = colors.onSurface)
+                Text("= ${item.result}", style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.SemiBold, color = colors.primary)
+            }
+            Box {
+                IconButton(onClick = { options = true }) { Icon(Icons.Outlined.MoreVert, "Options for ${item.expression}") }
+                DropdownMenu(options, { options = false }) {
+                    DropdownMenuItem(text = { Text("Use result") },
+                        leadingIcon = { Icon(Icons.AutoMirrored.Outlined.ArrowForward, null) },
+                        onClick = { options = false; onUseResult() })
+                    DropdownMenuItem(text = { Text("Edit calculation") },
+                        leadingIcon = { Icon(Icons.Outlined.Edit, null) },
+                        onClick = { options = false; onEdit() })
+                }
             }
         }
     }
 }
 
-@Composable
-private fun RecallPillButton(
-    label: String,
-    onClick: () -> Unit,
-    isPrimary: Boolean = false
-) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(if (isPrimary) CherryContainerDeep else GlassPanelBg)
-            .border(
-                width = 1.dp,
-                color = if (isPrimary) NeonCherryPrimary.copy(alpha = 0.8f) else GlassPanelBorder,
-                shape = RoundedCornerShape(10.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = label,
-            color = if (isPrimary) TextBright else NeonCherrySecondary,
-            fontSize = 11.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold
-        )
+private fun dateLabel(timestamp: Long): String {
+    val today = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+    }
+    val yesterday = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }
+    return when {
+        timestamp >= today.timeInMillis -> "Today"
+        timestamp >= yesterday.timeInMillis -> "Yesterday"
+        else -> DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(timestamp))
     }
 }

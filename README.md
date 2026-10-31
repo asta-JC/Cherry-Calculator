@@ -1,108 +1,117 @@
 <div align="center">
-
-# 🍒 Cherry Calculator
-
-<p align="center">
-  <img src="app/src/main/res/drawable/icon.png" width="108" alt="Cherry Calculator Logo" />
-</p>
-
-> A modern, elegant, and feature-packed scientific calculator built with **Jetpack Compose** and **Material 3**, featuring a gorgeous sci-fi glassmorphic dark theme with cherry accents. 🚀✨
-
+  <img src="calculator.svg" width="96" alt="Cherry Calculator app icon" />
+  <h1>Cherry Calculator</h1>
+  <p><strong>Everyday maths, with a little cherry.</strong></p>
+  <p>A calm Android calculator for quick sums, percentages, and scientific calculations.</p>
+  <p>
+    <img src="https://img.shields.io/badge/version-1.2-AF294A?style=flat-square" alt="Version 1.2" />
+    <img src="https://img.shields.io/badge/Android-7.0%2B-698269?style=flat-square" alt="Android 7.0 and newer" />
+    <img src="https://img.shields.io/badge/built_with-Kotlin_%26_Compose-78616B?style=flat-square" alt="Built with Kotlin and Compose" />
+  </p>
+  <p>
+    <a href="#screenshots">Screenshots</a> ·
+    <a href="#features">Features</a> ·
+    <a href="#getting-started">Get started</a> ·
+    <a href="https://github.com/asta-JC/Cherry-Calculator/issues">Feedback</a>
+  </p>
 </div>
 
 ---
 
-## 📱 Overview
+## Overview
 
-**Cherry Calculator** is a fast, responsive scientific calculator engineered for Android. It combines everyday arithmetic convenience with advanced scientific computing capabilities. Designed with an OLED dark aesthetic and custom cherry neon gradients, it features real-time live formula previews, calculation logs, customizable haptic and audio feedback, and full landscape and tablet layout adaptations.
+Cherry Calculator keeps everyday calculations easy to follow: enter an expression, see a quiet live preview, then press equals for a clear result. Expand Scientific when you need more tools, or open History beside the appearance control to reuse an earlier answer.
 
----
+## Screenshots
 
-## ✨ Key Features
+<table>
+  <tr><th width="33%">Everyday calculations</th><th width="33%">Scientific tools</th><th width="33%">Your history</th></tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/calculator-light.png" width="250" alt="Light calculator showing 200 plus 10 percent equals 220" /></td>
+    <td align="center"><img src="docs/screenshots/scientific-light.png" width="250" alt="Light scientific panel with angle units, memory, and trigonometric functions" /></td>
+    <td align="center"><img src="docs/screenshots/history-light.png" width="250" alt="Light history sheet with search and recent sample calculations" /></td>
+  </tr>
+  <tr><td align="center">Preview quietly. Confirm clearly.</td><td align="center">More tools when you need them.</td><td align="center">Find, reuse, or edit a calculation.</td></tr>
+</table>
 
-- 🔬 **Scientific & Basic Keypads**: Easily toggle between standard arithmetic and advanced scientific functions (`sin`, `cos`, `tan`, `ln`, `log`, $\sqrt{}$, power $x^n$, factorial $x!$, constants $\pi$ and $e$).
-- ⚡ **Real-time Live Preview**: Instant calculation preview displays expressions and results dynamically as you type.
-- 📐 **Angle Mode Toggle**: Seamlessly switch between Degrees (**DEG**) and Radians (**RAD**).
-- 🕒 **Calculation History**: Keep track of past calculations with instant recall for expressions and results.
-- 🔊 **Interactive Feedback**: Satisfying audio and tactile haptic feedback toggles for every button press.
-- 📱 **Adaptive Layouts**: Optimized for single-hand portrait phones, landscape mode with side-by-side keypads, and large-screen foldables and tablets.
-- 🎨 **Sci-Fi Cherry Theme**: Stunning OLED dark aesthetic powered by cherry neon gradients and smooth Material 3 animations.
+Captured on a physical Samsung Galaxy S22 Ultra with the production Compose screens in Light appearance. Calculations are temporary demonstration data; the capture does not change saved appearance or user history. System chrome is excluded.
 
----
+## Features
 
-## 📸 Screenshots & UI Preview
+- **Clear calculations:** large input, a smaller muted preview, and a prominent cherry-colored answer after equals.
+- **Everyday percentages:** `50% = 0.5`, `200 × 10% = 20`, and `200 + 10% = 220`.
+- **Scientific tools:** trigonometry and inverse functions, powers, roots, logarithms, factorials, constants, and memory controls. Degrees/Radians lives inside Scientific.
+- **Useful history:** search recent calculations, tap to reuse a result, or choose Edit calculation from an entry's menu. Entries show dates and times; clearing history asks for confirmation.
+- **Your appearance:** saved System, Light, and Dark modes with the shared CherryApps branding and optional key sounds.
+- **Flexible layout:** scrolling keeps expanded controls accessible, while wider screens show history alongside the calculator.
 
-| Standard Calculator | Scientific Mode | Calculation Logs |
-| :---: | :---: | :---: |
-| <img src="screenshots/1.jpg" width="220" alt="Standard Calculator" /> | <img src="screenshots/2.jpg" width="220" alt="Scientific Mode" /> | <img src="screenshots/3.jpg" width="220" alt="Calculation Logs" /> |
+## Compatibility
 
----
+| Area | Behavior |
+| :--- | :--- |
+| Android | Android 7.0 / API 24 or newer |
+| Calculations | Floating-point arithmetic with formatted results; very large or small values use scientific notation |
+| Percentages | Addition/subtraction uses the left amount as the base for a percentage operand; multiplication/division uses its decimal value |
+| History and memory | Kept in the current app session; they are not saved across process restarts |
+| Appearance | Saved locally and restored on launch |
 
-## 🛠️ Tech Stack & Architecture
+## Getting started
 
-- **UI Toolkit**: [Jetpack Compose](https://developer.android.com/jetpack/compose) & [Material 3](https://m3.material.io/)
-- **Architecture**: MVVM (Model-View-ViewModel) with Kotlin `StateFlow` and unidirectional data flow
-- **Language**: 100% [Kotlin](https://kotlinlang.org/)
-- **Evaluation Engine**: Custom robust mathematical expression evaluator supporting operator precedence, parentheses, and trigonometric angle modes
-- **State Management**: Lifecycle-aware state collection (`collectAsStateWithLifecycle`)
+### Requirements
 
----
+- A physical Android device running Android 7.0 or newer.
+- Android Studio compatible with the pinned Gradle and Android Gradle Plugin versions.
+- Android SDK 37 and JDK 25 for the project's Gradle daemon. The app targets Java 11 bytecode.
 
-## 📂 Project Structure
+### Build and run
 
-```tree
-com.asta.calculatorapp/
-├── domain/evaluator/       # Mathematical expression evaluator & angle unit handling
-├── ui/
-│   ├── components/         # Reusable keypads, display panel, history sheets
-│   ├── feedback/           # Sound & haptic feedback managers
-│   ├── screens/            # Main CalculatorScreen & layouts
-│   ├── theme/              # Color palettes, typography, and Material 3 theme
-│   └── viewmodel/          # CalculatorViewModel & UiState
-└── MainActivity.kt         # Entry point activity
+```bash
+git clone https://github.com/asta-JC/Cherry-Calculator.git
+cd Cherry-Calculator
+./gradlew :app:assembleDebug
+adb -s YOUR_DEVICE_SERIAL install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
----
+The APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. The distribution build uses the existing **debug/test signing certificate**, not a separate production key.
 
-## 🚀 Getting Started & Build Instructions
+### Tests
 
-### Prerequisites
-- Android Studio Ladybug or newer
-- JDK 17 or higher
-- Android SDK 24+ (Target SDK 34+)
+```bash
+./gradlew :app:testDebugUnitTest :app:lintDebug
+```
 
-### Build Steps
+The README gallery is reproducible on a physical phone using [the capture instructions](docs/screenshots/README.md).
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/asta-JC/Cherry-Calculator.git
-   cd CherryCalculator
-   ```
+## Built with
 
-2. **Open in Android Studio**:
-   - Open Android Studio and select **Open**.
-   - Navigate to the cloned `CherryCalculator` directory and let Gradle sync.
+| Layer | Technology |
+| :--- | :--- |
+| Interface | Kotlin, Jetpack Compose, Material 3 |
+| State | ViewModel, StateFlow, lifecycle-aware collection |
+| Mathematics | Local expression parser with operator precedence, functions, and angle modes |
+| Preferences | Android SharedPreferences for appearance |
+| Verification | JUnit, Compose UI tests, Android instrumentation |
 
-3. **Build & Run**:
-   - Connect an Android device or start an emulator.
-   - Run the app via Android Studio or execute via terminal:
-     ```bash
-     ./gradlew :app:assembleDebug
-     ```
+## What's new in 1.2
 
-4. **Run Unit Tests**:
-   ```bash
-   ./gradlew :app:testDebugUnitTest
-   ```
+- Shared cream, rose, and plum CherryApps styling with the original launcher icon preserved.
+- Larger input, subtle previews, and clear confirmed results.
+- Redesigned history and a header shortcut beside the appearance toggle.
+- Calculator-style percentages and angle units inside Scientific.
 
----
+## Feedback
 
-## 📄 License
+[Open an issue](https://github.com/asta-JC/Cherry-Calculator/issues) with your device, Android version, app version, and steps to reproduce. For calculation problems, include the expression, angle mode, expected answer, and actual answer. Use non-sensitive examples.
+
+## License & credits
 
 This project is developed as part of Asta's project series. Feel free to use and adapt for personal and educational use!
+
+The repository does not include a standalone license file. Third-party dependencies retain their own licenses. Interface icons come from Material Icons.
 
 ---
 
 <p align="center">
-  Made with ❤️ & 🍒 by Asta
+  <strong>Made with ❤️ &amp; 🍒 by Asta</strong><br />
+  <sub>Part of the CherryApp family.</sub>
 </p>

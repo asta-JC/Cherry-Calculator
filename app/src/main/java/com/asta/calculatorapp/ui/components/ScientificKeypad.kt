@@ -4,13 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.SquareFoot
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.Alignment
+import com.asta.calculatorapp.domain.evaluator.AngleUnit
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.asta.calculatorapp.ui.viewmodel.CalculatorAction
 
 /**
@@ -22,22 +25,29 @@ fun ScientificKeypad(
     isInverse: Boolean,
     hasMemory: Boolean,
     onAction: (CalculatorAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    angleUnit: AngleUnit = AngleUnit.DEGREE
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .graphicsLayer { clip = false },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Angle unit", style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            InputChip(selected = true,
+                onClick = { onAction(CalculatorAction.ToggleAngleUnit) },
+                modifier = Modifier.heightIn(min = 48.dp),
+                label = { Text(if (angleUnit == AngleUnit.DEGREE) "Degrees" else "Radians") },
+                leadingIcon = { Icon(Icons.Outlined.SquareFoot, null, Modifier.size(18.dp)) })
+        }
         // --- ROW 1: 2nd, MC, MR, M+, M- ---
-        val pressedMap1 = remember { mutableStateMapOf<Int, Boolean>() }
-        val isRow1Active = isInverse || hasMemory || pressedMap1.values.any { it }
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(if (isRow1Active) 10f else 0f),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FuturisticButton(
@@ -45,48 +55,40 @@ fun ScientificKeypad(
                 onClick = { onAction(CalculatorAction.ToggleInverse) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
                 isHighlighted = isInverse,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap1[0] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "MC",
                 onClick = { onAction(CalculatorAction.MemoryClear) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap1[1] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "MR",
                 onClick = { onAction(CalculatorAction.MemoryRecall) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
                 isHighlighted = hasMemory,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap1[2] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "M+",
                 onClick = { onAction(CalculatorAction.MemoryAdd) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap1[3] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "M-",
                 onClick = { onAction(CalculatorAction.MemorySubtract) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap1[4] = pressed }
+                modifier = Modifier.weight(1f)
             )
         }
 
         // --- ROW 2: Trig Functions & Constants ---
-        val pressedMap2 = remember { mutableStateMapOf<Int, Boolean>() }
-        val isRow2Active = pressedMap2.values.any { it }
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(if (isRow2Active) 10f else 0f),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FuturisticButton(
@@ -95,8 +97,7 @@ fun ScientificKeypad(
                     onAction(CalculatorAction.Function(if (isInverse) "asin" else "sin"))
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap2[0] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = if (isInverse) "cos⁻¹" else "cos",
@@ -104,8 +105,7 @@ fun ScientificKeypad(
                     onAction(CalculatorAction.Function(if (isInverse) "acos" else "cos"))
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap2[1] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = if (isInverse) "tan⁻¹" else "tan",
@@ -113,33 +113,27 @@ fun ScientificKeypad(
                     onAction(CalculatorAction.Function(if (isInverse) "atan" else "tan"))
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap2[2] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "π",
                 onClick = { onAction(CalculatorAction.Constant("π")) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap2[3] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "e",
                 onClick = { onAction(CalculatorAction.Constant("e")) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap2[4] = pressed }
+                modifier = Modifier.weight(1f)
             )
         }
 
         // --- ROW 3: Powers & Logarithms ---
-        val pressedMap3 = remember { mutableStateMapOf<Int, Boolean>() }
-        val isRow3Active = pressedMap3.values.any { it }
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(if (isRow3Active) 10f else 0f),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FuturisticButton(
@@ -153,8 +147,7 @@ fun ScientificKeypad(
                     }
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap3[0] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = if (isInverse) "10ⁿ" else "log",
@@ -167,8 +160,7 @@ fun ScientificKeypad(
                     }
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap3[1] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = if (isInverse) "x²" else "√",
@@ -181,22 +173,19 @@ fun ScientificKeypad(
                     }
                 },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap3[2] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "xⁿ",
                 onClick = { onAction(CalculatorAction.Operator("^")) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap3[3] = pressed }
+                modifier = Modifier.weight(1f)
             )
             FuturisticButton(
                 text = "x!",
                 onClick = { onAction(CalculatorAction.Factorial) },
                 buttonType = FuturisticButtonType.SCIENTIFIC,
-                modifier = Modifier.weight(1f),
-                onPressChanged = { pressed -> pressedMap3[4] = pressed }
+                modifier = Modifier.weight(1f)
             )
         }
     }

@@ -75,6 +75,10 @@ class CalculatorViewModel : ViewModel() {
     }
 
     private fun handleOperator(symbol: String) {
+        if (symbol == "%") {
+            handlePercentage()
+            return
+        }
         _uiState.update { state ->
             val normSymbol = when (symbol) {
                 "*" -> "×"
@@ -109,6 +113,19 @@ class CalculatorViewModel : ViewModel() {
                 isErrorState = false,
                 errorMessage = null
             )
+        }
+    }
+
+    private fun handlePercentage() {
+        _uiState.update { state ->
+            if (state.isErrorState) return@update state
+            val operand = state.result.ifEmpty { state.expression }.trimEnd()
+            val last = operand.lastOrNull() ?: return@update state
+            if (!last.isDigit() && last !in ").!%πe") return@update state
+            val expression = "$operand%"
+            state.copy(expression = expression,
+                previewResult = evaluatePreview(expression, state.angleUnit), result = "",
+                isErrorState = false, errorMessage = null)
         }
     }
 
@@ -247,7 +264,7 @@ class CalculatorViewModel : ViewModel() {
             }
 
             if (!trimmed) {
-                val operatorsToTrim = listOf(" + ", " - ", " × ", " ÷ ", " % ", " ^ ")
+                val operatorsToTrim = listOf(" + ", " - ", " × ", " ÷ ", " ^ ")
                 for (op in operatorsToTrim) {
                     if (expr.endsWith(op)) {
                         expr = expr.substring(0, expr.length - op.length)
@@ -311,7 +328,10 @@ class CalculatorViewModel : ViewModel() {
             val preview = evaluatePreview(state.expression, newUnit)
             state.copy(
                 angleUnit = newUnit,
-                previewResult = preview
+                previewResult = preview,
+                result = "",
+                isErrorState = false,
+                errorMessage = null
             )
         }
     }
@@ -438,12 +458,12 @@ class CalculatorViewModel : ViewModel() {
     private fun endsWithOperator(expr: String): Boolean {
         val trimmed = expr.trimEnd()
         return trimmed.endsWith("+") || trimmed.endsWith("-") || trimmed.endsWith("×") ||
-                trimmed.endsWith("÷") || trimmed.endsWith("%") || trimmed.endsWith("^")
+                trimmed.endsWith("÷") || trimmed.endsWith("^")
     }
 
     private fun replaceLastOperator(expr: String, newOp: String): String {
         val trimmed = expr.trimEnd()
-        val ops = listOf("+", "-", "×", "÷", "%", "^")
+        val ops = listOf("+", "-", "×", "÷", "^")
         for (op in ops) {
             if (trimmed.endsWith(op)) {
                 val base = trimmed.substring(0, trimmed.length - op.length).trimEnd()

@@ -197,4 +197,55 @@ class CalculatorViewModelTest {
         viewModel.onAction(CalculatorAction.ClearHistory)
         assertTrue(viewModel.uiState.value.history.isEmpty())
     }
+    @Test
+    fun `changing angle mode turns confirmed answer into a new preview`() {
+        viewModel.onAction(CalculatorAction.Function("sin"))
+        viewModel.onAction(CalculatorAction.Digit("30"))
+        viewModel.onAction(CalculatorAction.ParenthesisClose)
+        viewModel.onAction(CalculatorAction.Calculate)
+        assertEquals("0.5", viewModel.uiState.value.result)
+
+        viewModel.onAction(CalculatorAction.ToggleAngleUnit)
+        val preview = viewModel.uiState.value.previewResult
+        assertEquals("", viewModel.uiState.value.result)
+        assertTrue(preview.isNotEmpty())
+        assertFalse(preview == "0.5")
+
+        viewModel.onAction(CalculatorAction.Calculate)
+        assertEquals(preview, viewModel.uiState.value.result)
+        assertEquals("", viewModel.uiState.value.previewResult)
+    }
+
+    @Test
+    fun `percentage key appends postfix and keeps preview separate from result`() {
+        viewModel.onAction(CalculatorAction.Digit("200"))
+        viewModel.onAction(CalculatorAction.Operator("+"))
+        viewModel.onAction(CalculatorAction.Digit("10"))
+        viewModel.onAction(CalculatorAction.Operator("%"))
+        assertEquals("200 + 10%", viewModel.uiState.value.expression)
+        assertEquals("220", viewModel.uiState.value.previewResult)
+        assertEquals("", viewModel.uiState.value.result)
+        viewModel.onAction(CalculatorAction.Calculate)
+        assertEquals("220", viewModel.uiState.value.result)
+        viewModel.onAction(CalculatorAction.Operator("%"))
+        assertEquals("220%", viewModel.uiState.value.expression)
+        assertEquals("2.2", viewModel.uiState.value.previewResult)
+        viewModel.onAction(CalculatorAction.Delete)
+        assertEquals("220", viewModel.uiState.value.expression)
+    }
+
+    @Test
+    fun `percentage key ignores empty input and incomplete operators`() {
+        viewModel.onAction(CalculatorAction.Operator("%"))
+        assertEquals("", viewModel.uiState.value.expression)
+        viewModel.onAction(CalculatorAction.Digit("50"))
+        viewModel.onAction(CalculatorAction.Operator("%"))
+        viewModel.onAction(CalculatorAction.Operator("×"))
+        viewModel.onAction(CalculatorAction.Operator("%"))
+        assertEquals("50% × ", viewModel.uiState.value.expression)
+        viewModel.onAction(CalculatorAction.Digit("2"))
+        viewModel.onAction(CalculatorAction.Calculate)
+        assertEquals("1", viewModel.uiState.value.result)
+    }
+
 }

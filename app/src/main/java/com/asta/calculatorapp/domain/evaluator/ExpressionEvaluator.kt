@@ -66,6 +66,7 @@ object ExpressionEvaluator {
         data object Multiply : Token
         data object Divide : Token
         data object Modulo : Token
+        data object Percent : Token
         data object Power : Token
         data object Factorial : Token
         data object LParen : Token
@@ -85,7 +86,7 @@ object ExpressionEvaluator {
                 c == '-' -> { rawTokens.add(Token.Minus); i++ }
                 (c == '*') || (c == '×') -> { rawTokens.add(Token.Multiply); i++ }
                 (c == '/') || (c == '÷') -> { rawTokens.add(Token.Divide); i++ }
-                c == '%' -> { rawTokens.add(Token.Modulo); i++ }
+                c == '%' -> { rawTokens.add(Token.Percent); i++ }
                 c == '^' -> { rawTokens.add(Token.Power); i++ }
                 c == '!' -> { rawTokens.add(Token.Factorial); i++ }
                 c == '(' -> { rawTokens.add(Token.LParen); i++ }
@@ -168,6 +169,7 @@ object ExpressionEvaluator {
             is Token.Number -> true
             is Token.RParen -> true
             is Token.Factorial -> true
+            is Token.Percent -> true
             is Token.Identifier -> isConstant(prev.name)
             else -> false
         }
@@ -201,7 +203,7 @@ object ExpressionEvaluator {
             if (pos < tokens.size) {
                 throw EvaluationException.SyntaxError
             }
-            return valResult
+            return valResult.value
         }
 
         private fun peek(): Token? = if (pos < tokens.size) tokens[pos] else null
@@ -212,127 +214,83 @@ object ExpressionEvaluator {
             return t
         }
 
-        // expression = term ( ('+' | '-') term )*
-        private fun parseExpression(): Double {
+        // A percentage carries its intent until an arithmetic operation consumes it.
+        // This lets addition/subtraction use the left-hand amount as the base.
+        private data class Value(val value: Double, val percentage: Boolean = false)
+
+        private fun parseExpression(): Value {
             var left = parseTerm()
-            while (true) {
-                when (peek()) {
-                    is Token.Plus -> {
-                        consume()
-                        val right = parseTerm()
-                        left += right
-                    }
-                    is Token.Minus -> {
-                        consume()
-                        val right = parseTerm()
-                        left -= right
-                    }
-                    else -> break
-                }
+            while (peek() is Token.Plus || peek() is Token.Minus) {
+                val operator = consume()
+                val right = parseTerm()
+                val amount = if (right.percentage) left.value * right.value else right.value
+                left = Value(if (operator is Token.Plus) left.value + amount else left.value - amount)
             }
             return left
         }
 
-        // term = factor ( ('*' | '/' | '%') factor )*
-        private fun parseTerm(): Double {
+        private fun parseTerm(): Value {
             var left = parseFactor()
-            while (true) {
-                when (peek()) {
-                    is Token.Multiply -> {
-                        consume()
-                        val right = parseFactor()
-                        left *= right
-                    }
-                    is Token.Divide -> {
-                        consume()
-                        val right = parseFactor()
-                        if (right == 0.0) {
-                            throw EvaluationException.DivisionByZero
-                        }
-                        left /= right
-                    }
-                    is Token.Modulo -> {
-                        consume()
-                        val right = parseFactor()
-                        if (right == 0.0) {
-                            throw EvaluationException.DivisionByZero
-                        }
-                        left %= right
-                    }
-                    else -> break
+            while (peek() is Token.Multiply || peek() is Token.Divide || peek() is Token.Modulo) {
+                val operator = consume()
+                val right = parseFactor()
+                if ((operator is Token.Divide || operator is Token.Modulo) && right.value == 0.0) {
+                    throw EvaluationException.DivisionByZero
                 }
+                left = Value(when (operator) {
+                    is Token.Multiply -> left.value * right.value
+                    is Token.Divide -> left.value / right.value
+                    else -> left.value % right.value
+                })
             }
             return left
         }
 
-        // factor = postfix ( '^' factor )? (Power is right associative)
-        private fun parseFactor(): Double {
+        // Powers are right associative; postfix percentages bind to their operand.
+        private fun parseFactor(): Value {
             val base = parsePostfix()
             if (peek() is Token.Power) {
                 consume()
                 val exponent = parseFactor()
-                val res = base.pow(exponent)
-                if (res.isNaN()) throw EvaluationException.DomainError
-                return res
+                val result = base.value.pow(exponent.value)
+                if (result.isNaN()) throw EvaluationException.DomainError
+                return Value(result)
             }
             return base
         }
 
-        // postfix = primary ( '!' )*
-        private fun parsePostfix(): Double {
+        private fun parsePostfix(): Value {
             var value = parsePrimary()
             while (true) {
-                when (peek()) {
+                value = when (peek()) {
                     is Token.Factorial -> {
                         consume()
-                        value = computeFactorial(value)
+                        Value(computeFactorial(value.value))
                     }
-                    else -> break
+                    is Token.Percent -> {
+                        consume()
+                        Value(value.value / 100.0, percentage = true)
+                    }
+                    else -> return value
                 }
             }
-            return value
         }
 
-        // primary = NUMBER | CONSTANT | FUNCTION primary | '-' primary | '+' primary | '(' expression ')'
-        private fun parsePrimary(): Double {
-            val tok = peek() ?: throw EvaluationException.SyntaxError
-
-            return when (tok) {
-                is Token.Plus -> {
-                    consume()
-                    parsePrimary()
-                }
-                is Token.Minus -> {
-                    consume()
-                    -parsePrimary()
-                }
-                is Token.Number -> {
-                    consume()
-                    tok.value
-                }
+        private fun parsePrimary(): Value {
+            return when (val token = consume()) {
+                is Token.Plus -> parsePrimary()
+                is Token.Minus -> parsePrimary().let { it.copy(value = -it.value) }
+                is Token.Number -> Value(token.value)
                 is Token.LParen -> {
-                    consume()
-                    val exprVal = parseExpression()
-                    val closing = peek()
-                    if (closing is Token.RParen) {
-                        consume()
-                    } else {
-                        throw EvaluationException.SyntaxError
-                    }
-                    exprVal
+                    val value = parseExpression()
+                    if (consume() !is Token.RParen) throw EvaluationException.SyntaxError
+                    value
                 }
-                is Token.Identifier -> {
-                    consume()
-                    val name = tok.name
-                    when {
-                        name == "π" -> Math.PI
-                        name == "e" -> Math.E
-                        isFunction(name) -> {
-                            val arg = parsePrimary()
-                            evaluateFunction(name, arg, angleUnit)
-                        }
-                        else -> throw EvaluationException.SyntaxError
-                    }
+                is Token.Identifier -> when {
+                    token.name == "π" -> Value(Math.PI)
+                    token.name == "e" -> Value(Math.E)
+                    isFunction(token.name) -> Value(evaluateFunction(token.name, parsePrimary().value, angleUnit))
+                    else -> throw EvaluationException.SyntaxError
                 }
                 else -> throw EvaluationException.SyntaxError
             }

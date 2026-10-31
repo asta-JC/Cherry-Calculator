@@ -20,7 +20,7 @@ class ExpressionEvaluatorTest {
         assertTrue(result3 is EvaluationResult.Success)
         assertEquals("5", (result3 as EvaluationResult.Success).formattedResult)
 
-        val result4 = ExpressionEvaluator.evaluate("10 % 3")
+        val result4 = ExpressionEvaluator.evaluate("10 mod 3")
         assertTrue(result4 is EvaluationResult.Success)
         assertEquals("1", (result4 as EvaluationResult.Success).formattedResult)
     }
@@ -119,4 +119,26 @@ class ExpressionEvaluatorTest {
         assertTrue(res is EvaluationResult.Success)
         assertEquals("0.3", (res as EvaluationResult.Success).formattedResult)
     }
+    @Test
+    fun `percentages use calculator conventions`() {
+        val cases = mapOf(
+            "50%" to "0.5", "0%" to "0", "-50%" to "-0.5",
+            "200 × 10%" to "20", "200 ÷ 10%" to "2000",
+            "200 + 10%" to "220", "200 - 10%" to "180",
+            "200 + 10% + 10%" to "242", "200 + (10%)" to "220",
+            "(100 + 100) × 10%" to "20", "(20 + 30)%" to "0.5",
+            "50% + 1" to "1.5", "50%%" to "0.005",
+            "200 + 10% × 2" to "200.2", "50% × 2" to "1",
+            "200 + 10% - 5" to "215", "200 + 10% × (2 + 3)" to "200.5",
+            "10 mod 3" to "1"
+        )
+        cases.forEach { (expression, expected) ->
+            val result = ExpressionEvaluator.evaluate(expression)
+            assertTrue("$expression: $result", result is EvaluationResult.Success)
+            assertEquals(expression, expected, (result as EvaluationResult.Success).formattedResult)
+        }
+        assertTrue(ExpressionEvaluator.evaluate("%") is EvaluationResult.Error.SyntaxError)
+        assertTrue(ExpressionEvaluator.evaluate("200 ÷ 0%") is EvaluationResult.Error.DivisionByZero)
+    }
+
 }

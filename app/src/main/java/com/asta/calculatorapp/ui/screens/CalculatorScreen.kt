@@ -1,547 +1,141 @@
 package com.asta.calculatorapp.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Functions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.BrightnessAuto
+import androidx.compose.material.icons.filled.Check
+import com.asta.calculatorapp.ui.theme.Appearance
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asta.calculatorapp.domain.evaluator.AngleUnit
-import com.asta.calculatorapp.ui.components.BasicKeypad
-import com.asta.calculatorapp.ui.components.DisplayPanel
-import com.asta.calculatorapp.ui.components.EmbeddedHistoryPanel
-import com.asta.calculatorapp.ui.components.HistorySheet
-import com.asta.calculatorapp.ui.components.ScientificKeypad
+import com.asta.calculatorapp.R
+import com.asta.calculatorapp.ui.components.*
 import com.asta.calculatorapp.ui.feedback.rememberFeedbackHelper
-import com.asta.calculatorapp.ui.theme.CalculatorAppTheme
-import com.asta.calculatorapp.ui.theme.CherryContainerDeep
-import com.asta.calculatorapp.ui.theme.DarkBgPrimary
-import com.asta.calculatorapp.ui.theme.GlassPanelBg
-import com.asta.calculatorapp.ui.theme.GlassPanelBorder
-import com.asta.calculatorapp.ui.theme.NeonCherryPrimary
-import com.asta.calculatorapp.ui.theme.NeonCherrySecondary
-import com.asta.calculatorapp.ui.theme.TextBright
-import com.asta.calculatorapp.ui.theme.TextDim
-import com.asta.calculatorapp.ui.theme.TextMuted
-import com.asta.calculatorapp.ui.viewmodel.CalculatorAction
-import com.asta.calculatorapp.ui.viewmodel.CalculatorUiState
-import com.asta.calculatorapp.ui.viewmodel.CalculatorViewModel
+import com.asta.calculatorapp.ui.viewmodel.*
 
 @Composable
-fun CalculatorScreen(
-    viewModel: CalculatorViewModel = viewModel()
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val feedbackHelper = rememberFeedbackHelper()
-
-    CalculatorContent(
-        uiState = uiState,
-        onAction = { action ->
-            feedbackHelper.triggerFeedback(uiState.isSoundEnabled)
-            viewModel.onAction(action)
-        }
-    )
+fun CalculatorScreen(viewModel: CalculatorViewModel = viewModel(),
+    appearance: Appearance = Appearance.SYSTEM, onAppearanceChange: (Appearance) -> Unit = {}) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val feedback = rememberFeedbackHelper()
+    CalculatorContent(state, appearance, onAppearanceChange) {
+        feedback.triggerFeedback(state.isSoundEnabled)
+        viewModel.onAction(it)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalculatorContent(
-    uiState: CalculatorUiState,
-    onAction: (CalculatorAction) -> Unit
-) {
-    var showHistorySheet by remember { mutableStateOf(false) }
+fun CalculatorContent(uiState: CalculatorUiState, appearance: Appearance = Appearance.SYSTEM,
+    onAppearanceChange: (Appearance) -> Unit = {}, onAction: (CalculatorAction) -> Unit) {
+    var historyOpen by rememberSaveable { mutableStateOf(false) }
+    if (historyOpen) HistorySheet(uiState.history,
+        { onAction(CalculatorAction.RecallHistoryExpression(it)) },
+        { onAction(CalculatorAction.RecallHistoryResult(it)) },
+        { onAction(CalculatorAction.ClearHistory) }, { historyOpen = false })
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val isTablet = maxWidth >= 720.dp && maxHeight >= 600.dp
-        val isLandscapePhone = maxWidth >= 600.dp && maxHeight < 600.dp
-
-        // Modal History Sheet for non-tablets
-        if (!isTablet && showHistorySheet) {
-            HistorySheet(
-                history = uiState.history,
-                onRecallExpression = { item ->
-                    onAction(CalculatorAction.RecallHistoryExpression(item))
-                },
-                onRecallResult = { item ->
-                    onAction(CalculatorAction.RecallHistoryResult(item))
-                },
-                onClearHistory = {
-                    onAction(CalculatorAction.ClearHistory)
-                },
-                onDismiss = { showHistorySheet = false }
-            )
-        }
-
-        Scaffold(
-            containerColor = DarkBgPrimary,
-            modifier = Modifier.fillMaxSize()
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .drawBehind {
-                        // Atmospheric dark cherry radial gradient background glows
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(NeonCherryPrimary.copy(alpha = 0.12f), Color.Transparent)
-                            ),
-                            radius = size.width * 0.45f,
-                            center = Offset(size.width * 0.5f, size.height * 0.50f)
-                        )
-                        drawCircle(
-                            brush = Brush.radialGradient(
-                                colors = listOf(NeonCherrySecondary.copy(alpha = 0.08f), Color.Transparent)
-                            ),
-                            radius = size.width * 0.50f,
-                            center = Offset(size.width * 0.5f, size.height * 0.75f)
-                        )
-                    }
-            ) {
-                if (isTablet) {
-                    // Tablet Split 2-Pane Layout
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        // Left Pane: Keypad & Display
-                        Column(
-                            modifier = Modifier
-                                .weight(1.2f)
-                                .fillMaxHeight(),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            TopHeaderBar(
-                                isScientific = uiState.isScientificExpanded,
-                                isSoundEnabled = uiState.isSoundEnabled,
-                                angleUnit = uiState.angleUnit,
-                                onToggleScientific = { onAction(CalculatorAction.ToggleScientific) },
-                                onToggleSound = { onAction(CalculatorAction.ToggleSound) },
-                                onToggleAngleUnit = { onAction(CalculatorAction.ToggleAngleUnit) }
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            DisplayPanel(
-                                expression = uiState.expression,
-                                previewResult = uiState.previewResult,
-                                result = uiState.result,
-                                isScientific = uiState.isScientificExpanded,
-                                isInverse = uiState.isInverse,
-                                hasMemory = uiState.hasMemory,
-                                isErrorState = uiState.isErrorState,
-                                errorMessage = uiState.errorMessage,
-                                onToggleHistory = { showHistorySheet = true },
-                                onDismissError = { onAction(CalculatorAction.DismissError) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .zIndex(10f)
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateContentSize(),
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                AnimatedVisibility(
-                                    visible = uiState.isScientificExpanded,
-                                    enter = expandVertically() + fadeIn(),
-                                    exit = shrinkVertically() + fadeOut()
-                                ) {
-                                    ScientificKeypad(
-                                        isInverse = uiState.isInverse,
-                                        hasMemory = uiState.hasMemory,
-                                        onAction = onAction,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-
-                                BasicKeypad(
-                                    onAction = onAction,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            FooterTagline()
+    Scaffold(containerColor = MaterialTheme.colorScheme.background) { insets ->
+        BoxWithConstraints(Modifier.fillMaxSize().padding(insets)) {
+            val wide = maxWidth >= 700.dp
+            // Give the keypad the remaining space on tall screens, and scroll on compact screens.
+            val keyHeight = ((maxHeight - 430.dp) / 5).coerceIn(60.dp, 96.dp)
+            Row(Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState())
+                    .padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Image(painterResource(if (MaterialTheme.colorScheme.background.luminance() < 0.5f)
+                            R.drawable.cherryapps_logo_full_dark else R.drawable.cherryapps_logo_full),
+                            null, Modifier.size(32.dp).padding(2.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Cherry Calculator", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                        IconButton(onClick = { historyOpen = true }) {
+                            Icon(Icons.Default.History, "Calculation history",
+                                tint = MaterialTheme.colorScheme.primary)
                         }
-
-                        // Right Pane: Embedded History Logs
-                        EmbeddedHistoryPanel(
-                            history = uiState.history,
-                            onRecallExpression = { item ->
-                                onAction(CalculatorAction.RecallHistoryExpression(item))
-                            },
-                            onRecallResult = { item ->
-                                onAction(CalculatorAction.RecallHistoryResult(item))
-                            },
-                            onClearHistory = {
-                                onAction(CalculatorAction.ClearHistory)
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                        )
+                        AppearanceControl(appearance, onAppearanceChange)
                     }
-                } else if (isLandscapePhone) {
-                    // Landscape Phone Layout
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp, vertical = 6.dp)
-                    ) {
-                        TopHeaderBar(
-                            isScientific = uiState.isScientificExpanded,
-                            isSoundEnabled = uiState.isSoundEnabled,
-                            angleUnit = uiState.angleUnit,
-                            onToggleScientific = { onAction(CalculatorAction.ToggleScientific) },
-                            onToggleSound = { onAction(CalculatorAction.ToggleSound) },
-                            onToggleAngleUnit = { onAction(CalculatorAction.ToggleAngleUnit) }
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        DisplayPanel(
-                            expression = uiState.expression,
-                            previewResult = uiState.previewResult,
-                            result = uiState.result,
-                            isScientific = uiState.isScientificExpanded,
-                            isInverse = uiState.isInverse,
-                            hasMemory = uiState.hasMemory,
-                            isErrorState = uiState.isErrorState,
-                            errorMessage = uiState.errorMessage,
-                            onToggleHistory = { showHistorySheet = true },
-                            onDismissError = { onAction(CalculatorAction.DismissError) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .zIndex(10f)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            if (uiState.isScientificExpanded) {
-                                ScientificKeypad(
-                                    isInverse = uiState.isInverse,
-                                    hasMemory = uiState.hasMemory,
-                                    onAction = onAction,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            BasicKeypad(
-                                onAction = onAction,
-                                modifier = Modifier.weight(1f)
-                            )
+                    DisplayPanel(uiState.expression, uiState.previewResult, uiState.result,
+                        uiState.isScientificExpanded, uiState.isInverse, uiState.hasMemory,
+                        uiState.isErrorState, uiState.errorMessage,
+                        { onAction(CalculatorAction.DismissError) })
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        FilterChip(selected = uiState.isScientificExpanded,
+                            onClick = { onAction(CalculatorAction.ToggleScientific) },
+                            label = { Text("Scientific") },
+                            leadingIcon = { Icon(Icons.Default.Functions, null, Modifier.size(18.dp)) })
+                        Spacer(Modifier.weight(1f))
+                        IconButton(onClick = { onAction(CalculatorAction.ToggleSound) }) {
+                            Icon(if (uiState.isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+                                if (uiState.isSoundEnabled) "Mute key sounds" else "Enable key sounds",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        FooterTagline()
                     }
-                } else {
-                    // Standard Portrait Screen Layout
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        TopHeaderBar(
-                            isScientific = uiState.isScientificExpanded,
-                            isSoundEnabled = uiState.isSoundEnabled,
-                            angleUnit = uiState.angleUnit,
-                            onToggleScientific = { onAction(CalculatorAction.ToggleScientific) },
-                            onToggleSound = { onAction(CalculatorAction.ToggleSound) },
-                            onToggleAngleUnit = { onAction(CalculatorAction.ToggleAngleUnit) }
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        DisplayPanel(
-                            expression = uiState.expression,
-                            previewResult = uiState.previewResult,
-                            result = uiState.result,
-                            isScientific = uiState.isScientificExpanded,
-                            isInverse = uiState.isInverse,
-                            hasMemory = uiState.hasMemory,
-                            isErrorState = uiState.isErrorState,
-                            errorMessage = uiState.errorMessage,
-                            onToggleHistory = { showHistorySheet = true },
-                            onDismissError = { onAction(CalculatorAction.DismissError) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .zIndex(10f)
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateContentSize(),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            AnimatedVisibility(
-                                visible = uiState.isScientificExpanded,
-                                enter = expandVertically() + fadeIn(),
-                                exit = shrinkVertically() + fadeOut()
-                            ) {
-                                ScientificKeypad(
-                                    isInverse = uiState.isInverse,
-                                    hasMemory = uiState.hasMemory,
-                                    onAction = onAction,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-
-                            BasicKeypad(
-                                onAction = onAction,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        FooterTagline()
+                    AnimatedVisibility(uiState.isScientificExpanded,
+                        enter = expandVertically(tween(200)), exit = shrinkVertically(tween(200))) {
+                        ScientificKeypad(uiState.isInverse, uiState.hasMemory, onAction, angleUnit = uiState.angleUnit)
                     }
+                    BasicKeypad(onAction, keyHeight = keyHeight)
+                    Spacer(Modifier.height(4.dp))
                 }
+                if (wide) EmbeddedHistoryPanel(uiState.history,
+                    { onAction(CalculatorAction.RecallHistoryExpression(it)) },
+                    { onAction(CalculatorAction.RecallHistoryResult(it)) },
+                    { onAction(CalculatorAction.ClearHistory) },
+                    modifier = Modifier.weight(0.85f).fillMaxHeight().padding(vertical = 8.dp))
             }
         }
     }
 }
 
 @Composable
-private fun TopHeaderBar(
-    isScientific: Boolean,
-    isSoundEnabled: Boolean,
-    angleUnit: AngleUnit,
-    onToggleScientific: () -> Unit,
-    onToggleSound: () -> Unit,
-    onToggleAngleUnit: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // App Branding
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(NeonCherryPrimary, NeonCherrySecondary)
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Calculate,
-                    contentDescription = null,
-                    tint = TextBright,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                Text(
-                    text = "CHERRY CALC",
-                    color = TextBright,
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
-                Text(
-                    text = "Asta's project",
-                    color = NeonCherrySecondary,
-                    fontSize = 9.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 1.2.sp
-                )
+private fun AppearanceControl(appearance: Appearance, onChange: (Appearance) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val icon = when (appearance) {
+        Appearance.SYSTEM -> Icons.Outlined.BrightnessAuto
+        Appearance.LIGHT -> Icons.Outlined.LightMode
+        Appearance.DARK -> Icons.Outlined.DarkMode
+    }
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(icon, "Appearance: ${appearance.name.lowercase()}. Change light or dark theme",
+                tint = MaterialTheme.colorScheme.primary)
+        }
+        DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
+            Appearance.entries.forEach { mode ->
+                DropdownMenuItem(text = { Text(when (mode) {
+                    Appearance.SYSTEM -> "System appearance"
+                    Appearance.LIGHT -> "Light"
+                    Appearance.DARK -> "Dark"
+                }) }, onClick = { onChange(mode); expanded = false },
+                    leadingIcon = { Icon(when (mode) {
+                        Appearance.SYSTEM -> Icons.Outlined.BrightnessAuto
+                        Appearance.LIGHT -> Icons.Outlined.LightMode
+                        Appearance.DARK -> Icons.Outlined.DarkMode
+                    }, null) },
+                    trailingIcon = { if (appearance == mode) Icon(Icons.Default.Check, "Selected") })
             }
         }
-
-        // Header Actions
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            HeaderPillButton(
-                icon = Icons.Default.Functions,
-                label = "SCI",
-                isActive = isScientific,
-                onClick = onToggleScientific
-            )
-
-            HeaderPillButton(
-                icon = Icons.Default.Autorenew,
-                label = if (angleUnit == AngleUnit.DEGREE) "DEG" else "RAD",
-                isActive = true,
-                onClick = onToggleAngleUnit
-            )
-
-            IconButton(
-                onClick = onToggleSound,
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(if (isSoundEnabled) CherryContainerDeep else GlassPanelBg)
-                    .border(1.dp, if (isSoundEnabled) NeonCherryPrimary else GlassPanelBorder, CircleShape)
-            ) {
-                Icon(
-                    imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-                    contentDescription = if (isSoundEnabled) "Sound Enabled" else "Sound Muted",
-                    tint = if (isSoundEnabled) NeonCherrySecondary else TextMuted,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun HeaderPillButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    isActive: Boolean,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(if (isActive) CherryContainerDeep else GlassPanelBg)
-            .border(
-                width = 1.dp,
-                color = if (isActive) NeonCherryPrimary else GlassPanelBorder,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = if (isActive) NeonCherrySecondary else TextMuted,
-            modifier = Modifier.size(16.dp)
-        )
-        Text(
-            text = label,
-            color = if (isActive) TextBright else TextMuted,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-private fun FooterTagline() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Cherry Calculator // Asta v1.0",
-            color = TextDim,
-            fontSize = 10.sp,
-            fontFamily = FontFamily.Monospace,
-            letterSpacing = 1.5.sp
-        )
-    }
-}
-
-@Preview(showBackground = true, device = "spec:width=411dp,height=891dp")
-@Composable
-fun CalculatorScreenPreview() {
-    CalculatorAppTheme {
-        CalculatorContent(
-            uiState = CalculatorUiState(
-                expression = "sin(45) + 12.5 × 8",
-                previewResult = "100.7071",
-                angleUnit = AngleUnit.DEGREE,
-                isScientificExpanded = true,
-                hasMemory = true
-            ),
-            onAction = {}
-        )
     }
 }
